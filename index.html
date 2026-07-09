@@ -13,6 +13,7 @@
             --neon-morado: #bf55ec;
             --neon-rosado: #ff64b4;
             --neon-verde: #25D366;
+            --neon-lima: #a6ff00; /* Nuevo color estético para los capuchones */
             --neon-alerta: #ffaa00;
             --texto-blanco: #ffffff;
             --texto-gris: #8b949e;
@@ -43,7 +44,7 @@
         .nav-btn:hover { color: white; }
         .nav-btn.activo { color: var(--neon-azul); border-bottom-color: var(--neon-azul); }
 
-        /* NUEVO: LETRERO ULTRA DESTACADO DE PERSONALIZACIÓN */
+        /* LETRERO ULTRA DESTACADO DE PERSONALIZACIÓN */
         .banner-destacado {
             background: linear-gradient(90deg, rgba(11, 15, 20, 0.95) 0%, rgba(2, 4, 6, 0.95) 100%);
             border: 2px dashed var(--neon-alerta);
@@ -131,6 +132,7 @@
         .tarjeta-portada:hover { border-color: var(--neon-azul); box-shadow: 0 5px 25px rgba(0, 240, 255, 0.15); }
         .tarjeta-portada.destacada-pro:hover { border-color: var(--neon-morado); box-shadow: 0 5px 25px rgba(191, 85, 236, 0.2); }
         .tarjeta-portada.destacada-dama:hover { border-color: var(--neon-rosado); box-shadow: 0 5px 25px rgba(255, 100, 180, 0.2); }
+        .tarjeta-portada.destacada-capuchon:hover { border-color: var(--neon-lima); box-shadow: 0 5px 25px rgba(166, 255, 0, 0.15); }
         
         .img-portada-contenedor { 
             width: 100%; height: 320px; background: #070a0e; position: relative; 
@@ -141,10 +143,11 @@
         .badge-precio {
             position: absolute; top: 15px; right: 15px; background: rgba(0, 0, 0, 0.85);
             color: var(--neon-azul); padding: 6px 12px; border-radius: 4px; font-weight: bold;
-            font-size: 0.85rem; border: 1px solid var(--neon-azul); z-index: 10;
+            font-size: 0.85rem; border: 1px solid var(--neon-azul); z-index: 10; text-align: right; line-height: 1.3;
         }
         .badge-precio.pro { color: var(--neon-morado); border-color: var(--neon-morado); }
         .badge-precio.dama { color: var(--neon-rosado); border-color: var(--neon-rosado); }
+        .badge-precio.capuchon { color: var(--neon-lima); border-color: var(--neon-lima); font-size: 0.8rem; }
 
         .info-portada { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
         .info-portada h3 { font-size: 1.3rem; color: white; font-weight: 600; }
@@ -160,6 +163,8 @@
         .btn-galeria.btn-pro-galeria:hover { background: white; color: black; }
         .btn-galeria.btn-dama-galeria { background: var(--neon-rosado); color: white; }
         .btn-galeria.btn-dama-galeria:hover { background: white; color: black; }
+        .btn-galeria.btn-capuchon-galeria { background: var(--neon-lima); color: black; }
+        .btn-galeria.btn-capuchon-galeria:hover { background: white; box-shadow: 0 0 12px white; }
 
         /* MODAL FLOTANTE DE LA GALERÍA DE FOTOS */
         .modal-galeria {
@@ -273,7 +278,6 @@
 </head>
 <body>
 
-    <!-- LOGO Y ENCABEZADO -->
     <header>
         <div class="logo-box">
             <img src="img/logo-induproj_j_k.jpg" alt="Logo InduPro JK" onerror="this.src='img/logo-induprojk.jpg'">
@@ -282,25 +286,22 @@
         <p>Prendas Industriales y Dotaciones 100% Personalizables sobre Pedido</p>
     </header>
 
-    <!-- MENÚ SIMPLIFICADO (3 PESTAÑAS) -->
     <nav>
         <button class="nav-btn activo" onclick="cambiarPestaña('inicio', this)">Inicio</button>
         <button class="nav-btn" onclick="cambiarPestaña('catalogo', this)">Ver Catálogo</button>
         <button class="nav-btn" onclick="cambiarPestaña('pagos', this)">Medios de Pago y Envíos</button>
     </nav>
 
-    <!-- NUEVO: LETRERO DE AVISO IMPORTANTE (ESTÁ FUERA DE LAS PESTAÑAS PARA QUE NUNCA SE OCULTE) -->
     <div class="banner-destacado">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
         <div class="banner-destacado-texto">
             <h4>¡Prendas 100% Personalizadas!</h4>
-            <p>Recuerde que todas las chaquetas se fabrican totalmente a su gusto personal o empresarial: usted elige los <strong>colores de tela, las combinaciones de diseño, los bordados de logotipos y la distribución de bolsillos</strong>. ¡Damos vida a sus ideas operativas!</p>
+            <p>Recuerde que todas las chaquetas se fabrican totalmente al gusto de su empresa: usted elige los <strong>colores de tela, las combinaciones de diseño, los bordados de logotipos y la distribución de bolsillos</strong>. ¡Damos vida a sus ideas operativas!</p>
         </div>
     </div>
 
     <div class="container">
 
-        <!-- PESTAÑA 1: INICIO TOTALMENTE INFORMATIVO -->
         <div id="pantalla-inicio" class="seccion-pantalla activa">
             <div class="bienvenida-box">
                 <h2>Exhibición Oficial de Muestras y Confección</h2>
@@ -310,8 +311,8 @@
                 
                 <div class="indicador-pasos">
                     <div class="paso-card pro">
-                        <h3><i class="fa-solid fa-shirt"></i> 1. Explora las 4 Líneas</h3>
-                        <p>Navega en la pestaña "Ver Catálogo" para conocer las especificaciones de la Línea Estándar, Premium, Dama y las piezas Especiales Exclusivas.</p>
+                        <h3><i class="fa-solid fa-shirt"></i> 1. Explora el Catálogo</h3>
+                        <p>Navega en la pestaña "Ver Catálogo" para conocer nuestras chaquetas y la nueva línea de capuchones industriales en Drill y Dacrón.</p>
                     </div>
                     <div class="paso-card">
                         <h3><i class="fa-solid fa-images"></i> 2. Mira Fotos Reales</h3>
@@ -331,13 +332,11 @@
             </div>
         </div>
 
-        <!-- PESTAÑA 2: CATÁLOGO -->
         <div id="pantalla-catalogo" class="seccion-pantalla">
             <p style="text-align: center; color: var(--texto-gris); margin-bottom: 35px; font-size: 0.95rem;">Selecciona una de nuestras líneas de producción para desplegar la galería de muestras fabricadas.</p>
             
             <div class="grid-portadas">
                 
-                <!-- 1. PORTADA: PRO EXCLUSIVAS -->
                 <div class="tarjeta-portada destacada-pro">
                     <div class="img-portada-contenedor">
                         <span class="badge-precio pro">A Convenir</span>
@@ -350,7 +349,6 @@
                     </div>
                 </div>
 
-                <!-- 2. PORTADA: PREMIUM DAMA -->
                 <div class="tarjeta-portada destacada-dama">
                     <div class="img-portada-contenedor">
                         <span class="badge-precio dama">Precio: $95.000</span>
@@ -363,7 +361,6 @@
                     </div>
                 </div>
 
-                <!-- 3. PORTADA: LÍNEA ESTÁNDAR -->
                 <div class="tarjeta-portada">
                     <div class="img-portada-contenedor">
                         <span class="badge-precio">Base: $85.000</span>
@@ -376,7 +373,6 @@
                     </div>
                 </div>
 
-                <!-- 4. PORTADA: LÍNEA PREMIUM -->
                 <div class="tarjeta-portada">
                     <div class="img-portada-contenedor">
                         <span class="badge-precio">Base: $95.000</span>
@@ -389,10 +385,33 @@
                     </div>
                 </div>
 
+                <div class="tarjeta-portada destacada-capuchon">
+                    <div class="img-portada-contenedor">
+                        <span class="badge-precio capuchon">Unidad: $16.000<br>X Mayor*: $14.000</span>
+                        <img src="img/portada-capuchon-drill.jpg" alt="Capuchones de Drill">
+                    </div>
+                    <div class="info-portada">
+                        <h3>Capuchones en Drill</h3>
+                        <p>Complemento de alta resistencia y protección industrial para el área de trabajo. Fabricados en tela Drill de excelente grosor y durabilidad. *Precio al por mayor aplica a partir de una docena (12 unidades).</p>
+                        <button class="btn-galeria btn-capuchon-galeria" onclick="abrirGaleriaFlotante('capuchonDrill')"><i class="fa-solid fa-images"></i> Ver Ejemplos Reales (6)</button>
+                    </div>
+                </div>
+
+                <div class="tarjeta-portada destacada-capuchon">
+                    <div class="img-portada-contenedor">
+                        <span class="badge-precio capuchon">Unidad: $12.000<br>X Mayor*: $10.000</span>
+                        <img src="img/portada-capuchon-dracon.jpg" alt="Capuchones de Dacrón">
+                    </div>
+                    <div class="info-portada">
+                        <h3>Capuchones en Dacrón</h3>
+                        <p>Diseño cómodo, ligero y altamente funcional para protección operativa diaria. Confección de alta calidad con acabados estéticos excelentes. *Precio al por mayor aplica a partir de una docena (12 unidades).</p>
+                        <button class="btn-galeria btn-capuchon-galeria" onclick="abrirGaleriaFlotante('capuchonDacron')"><i class="fa-solid fa-images"></i> Ver Ejemplos Reales (6)</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <!-- MODAL FLOTANTE DE LA GALERÍA -->
         <div id="modal-fotos" class="modal-galeria">
             <div class="modal-contenido">
                 <button class="btn-cerrar-modal" onclick="cerrarGaleriaFlotante()">&times;</button>
@@ -401,7 +420,6 @@
             </div>
         </div>
 
-        <!-- VISOR INTERNO (ZOOM AL DAR CLICK A UNA FOTO DE LA GALERÍA) -->
         <div id="visor-lightbox" class="visor-zoom" onclick="cerrarZoom()">
             <div class="visor-contenido" onclick="event.stopPropagation()">
                 <button class="btn-cerrar-visor" onclick="cerrarZoom()">&times;</button>
@@ -410,11 +428,9 @@
             </div>
         </div>
 
-        <!-- PESTAÑA 3: CONDICIONES COMERCIALES, ENVÍOS Y MEDIOS DE PAGO -->
         <div id="pantalla-pagos" class="seccion-pantalla">
             <div class="grid-pagos-envios">
                 
-                <!-- CAJA DE INFORMACIÓN FINANCIERA -->
                 <div class="card-info-pago">
                     <h3><i class="fa-solid fa-wallet"></i> Métodos y Formas de Pago</h3>
                     
@@ -442,7 +458,6 @@
                     </div>
                 </div>
 
-                <!-- CAJA DE LOGÍSTICA DE ENVÍOS -->
                 <div class="card-info-pago envios">
                     <h3><i class="fa-solid fa-truck-fast"></i> Cobertura y Envíos</h3>
                     
@@ -476,7 +491,6 @@
 
     </div>
 
-    <!-- BOTÓN PRINCIPAL WHATSAPP GLOBAL -->
     <a href="https://api.whatsapp.com/send?phone=573184250115&text=*Hola!%20Vengo%20desde%20el%20Cat%C3%A1logo%20Digital%20y%20me%20gustar%C3%ADa%20agendar%20una%20cotizaci%C3%B3n%20para%20unas%20prendas.*" 
        target="_blank" 
        class="btn-whatsapp-global">
@@ -488,7 +502,10 @@
             pro: Array.from({length: 11}, (_, i) => ({ ruta: `img/chaqueta-exclusiva-${i+1}.jpg`, nombre: `PRO Exclusiva - Ref ${i+1}` })),
             dama: Array.from({length: 9}, (_, i) => ({ ruta: `img/chaqueta-dama-${i+1}.jpg`, nombre: `Premium Dama - Muestra ${i+1}` })),
             estandar: Array.from({length: 18}, (_, i) => ({ ruta: `img/chaqueta-estandar-${i+1}.jpg`, nombre: `Línea Estándar - Muestra ${i+1}` })),
-            premium: Array.from({length: 15}, (_, i) => ({ ruta: `img/chaqueta-premium-${i+1}.jpg`, nombre: `Línea Premium - Muestra ${i+1}` }))
+            premium: Array.from({length: 15}, (_, i) => ({ ruta: `img/chaqueta-premium-${i+1}.jpg`, nombre: `Línea Premium - Muestra ${i+1}` })),
+            // Nuevas galerías de capuchones configuradas a 6 imágenes cada una:
+            capuchonDrill: Array.from({length: 6}, (_, i) => ({ ruta: `img/capuchon-drill-${i+1}.jpg`, nombre: `Capuchón Drill - Muestra ${i+1}` })),
+            capuchonDacron: Array.from({length: 6}, (_, i) => ({ ruta: `img/capuchon-dracon-${i+1}.jpg`, nombre: `Capuchón Dacrón - Muestra ${i+1}` }))
         };
 
         function cambiarPestaña(pantallaId, boton) {
@@ -504,14 +521,21 @@
             const titulo = document.getElementById('modal-titulo');
             const contenedorGrid = document.getElementById('modal-grid-imagenes');
             
-            const titulos = { pro: "Línea PRO Exclusivas", dama: "Línea Premium Dama", estandar: "Línea Estándar", premium: "Línea Premium" };
+            const titulos = { 
+                pro: "Línea PRO Exclusivas", 
+                dama: "Línea Premium Dama", 
+                estandar: "Línea Estándar", 
+                premium: "Línea Premium",
+                capuchonDrill: "Capuchones en Drill",
+                capuchonDacron: "Capuchones en Dacrón"
+            };
             titulo.innerText = `Muestras de la ${titulos[linea] || ''}`;
 
             contenedorGrid.innerHTML = "";
             (galeriaFotos[linea] || []).forEach(item => {
                 contenedorGrid.innerHTML += `
                     <div class="img-item-galeria" onclick="abrirVisorDetalle('${item.ruta}', '${item.nombre}')">
-                        <img src="${item.ruta}" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/300x240/0b0f14/00f0ff?text=InduPro+JK'">
+                        <img src="${item.ruta}" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/300x240/0b0f14/a6ff00?text=InduPro+JK'">
                         <div class="capa-lupa"><i class="fa-solid fa-magnifying-glass-plus"></i> Ampliar Imagen</div>
                     </div>
                 `;
