@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InduPro JK | Catálogo Industrial</title>
+    <title>Reyand InduPro | Catálogo Industrial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -13,7 +13,7 @@
             --neon-morado: #bf55ec;
             --neon-rosado: #ff64b4;
             --neon-verde: #25D366;
-            --neon-lima: #a6ff00; /* Nuevo color estético para los capuchones */
+            --neon-lima: #a6ff00;
             --neon-alerta: #ffaa00;
             --texto-blanco: #ffffff;
             --texto-gris: #8b949e;
@@ -44,7 +44,7 @@
         .nav-btn:hover { color: white; }
         .nav-btn.activo { color: var(--neon-azul); border-bottom-color: var(--neon-azul); }
 
-        /* LETRERO ULTRA DESTACADO DE PERSONALIZACIÓN */
+        /* BANNER DESTACADO DE PERSONALIZACIÓN */
         .banner-destacado {
             background: linear-gradient(90deg, rgba(11, 15, 20, 0.95) 0%, rgba(2, 4, 6, 0.95) 100%);
             border: 2px dashed var(--neon-alerta);
@@ -62,7 +62,6 @@
         .banner-destacado i {
             font-size: 2.2rem;
             color: var(--neon-alerta);
-            animation: rodarIcono 6s infinite linear;
         }
         .banner-destacado-texto h4 {
             color: #ffffff;
@@ -93,7 +92,7 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* PESTAÑA 1: INICIO TOTALMENTE EXPLICATIVO Y LLAMATIVO */
+        /* PESTAÑA 1: INICIO EXPLICATIVO */
         .bienvenida-box {
             background: var(--bg-tarjeta); border: 1px solid rgba(0, 240, 255, 0.1);
             border-radius: 14px; padding: 40px; text-align: center; margin-bottom: 35px;
@@ -166,7 +165,7 @@
         .btn-galeria.btn-capuchon-galeria { background: var(--neon-lima); color: black; }
         .btn-galeria.btn-capuchon-galeria:hover { background: white; box-shadow: 0 0 12px white; }
 
-        /* MODAL FLOTANTE DE LA GALERÍA DE FOTOS */
+        /* MODAL FLOTANTE DE GALERÍA DE FOTOS */
         .modal-galeria {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); z-index: 200; justify-content: center; align-items: center; padding: 20px;
@@ -192,7 +191,7 @@
         }
         .img-item-galeria:hover .capa-lupa { opacity: 1; }
 
-        /* LIGHTBOX (ZOOM ULTRA DE IMÁGENES) */
+        /* LIGHTBOX DE IMÁGENES */
         .visor-zoom {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(2, 3, 5, 0.98); z-index: 400; justify-content: center; align-items: center; padding: 20px;
@@ -205,11 +204,10 @@
         .visor-titulo { color: white; margin-top: 15px; font-size: 1.1rem; letter-spacing: 0.5px; }
         .btn-cerrar-visor { position: absolute; top: -45px; right: 0; background: transparent; border: none; color: #fff; font-size: 2.5rem; cursor: pointer; }
 
-        /* PESTAÑA 3: INFORMACIÓN DE ENVÍOS Y PAGOS */
-        .grid-pagos-envios { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 30px; 
+        /* PESTAÑA 3: PAGOS */
+        .contenedor-pago-unico {
+            max-width: 600px;
+            margin: 0 auto;
         }
         .card-info-pago {
             background: var(--bg-tarjeta); 
@@ -228,7 +226,6 @@
             border-bottom: 1px solid rgba(255,255,255,0.08); 
             padding-bottom: 12px; 
         }
-        .card-info-pago.envios h3 { color: #ffaa00; }
         
         .pago-item { 
             display: flex; 
@@ -254,17 +251,33 @@
             color: white; 
             font-size: 1.05rem; 
         }
-        
-        .marcas-pago { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
-        .marca-tag {
-            background: #040609; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 6px;
-            font-weight: bold; font-size: 0.9rem; letter-spacing: 0.5px; color: white; display: flex; align-items: center; gap: 8px;
-        }
-        .marca-tag.nequi { border-color: #bf55ec; color: #bf55ec; }
-        .marca-tag.bancolombia { border-color: #fff200; color: #ffffff; }
-        .marca-tag.davi { border-color: #ff4d4d; color: #ff4d4d; }
 
-        /* BOTÓN DE WHATSAPP GLOBAL FIJO */
+        .caja-bancolombia {
+            background: #040609;
+            border: 1px solid #fff200;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .caja-bancolombia h4 {
+            color: #fff200;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .caja-bancolombia .llave-numero {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            margin: 5px 0;
+        }
+
+        /* BOTÓN FLOTANTE WHATSAPP */
         .btn-whatsapp-global {
             position: fixed; bottom: 25px; right: 25px; background: var(--neon-verde); color: white;
             padding: 15px 24px; border-radius: 50px; font-weight: bold; font-size: 1.05rem; text-decoration: none;
@@ -280,16 +293,16 @@
 
     <header>
         <div class="logo-box">
-            <img src="img/logo-induproj_j_k.jpg" alt="Logo InduPro JK" onerror="this.src='img/logo-induprojk.jpg'">
+            <img src="img/logo-induprojk.jpg" alt="Logo Reyand InduPro" onerror="this.src='https://via.placeholder.com/120/0b0f14/00f0ff?text=Reyand'">
         </div>
-        <h1>InduPro JK</h1>
+        <h1>Reyand InduPro</h1>
         <p>Prendas Industriales y Dotaciones 100% Personalizables sobre Pedido</p>
     </header>
 
     <nav>
         <button class="nav-btn activo" onclick="cambiarPestaña('inicio', this)">Inicio</button>
         <button class="nav-btn" onclick="cambiarPestaña('catalogo', this)">Ver Catálogo</button>
-        <button class="nav-btn" onclick="cambiarPestaña('pagos', this)">Medios de Pago y Envíos</button>
+        <button class="nav-btn" onclick="cambiarPestaña('pagos', this)">Medios de Pago</button>
     </nav>
 
     <div class="banner-destacado">
@@ -337,22 +350,50 @@
             
             <div class="grid-portadas">
                 
+                <!-- 1. LÍNEA PREMIUM -->
+                <div class="tarjeta-portada">
+                    <div class="img-portada-contenedor">
+                        <span class="badge-precio">Base: $95.000</span>
+                        <img src="img/portada-premium-1.jpg" alt="Línea Premium" onerror="this.src='https://via.placeholder.com/300x320/0b0f14/00f0ff?text=L%C3%ADnea+Premium'">
+                    </div>
+                    <div class="info-portada">
+                        <h3>Línea Premium</h3>
+                        <p>Confección de alta gama reforzada a 3 hilos con un sistema robusto de 3 broches. Ideal para los entornos de trabajo pesado más exigentes y acabados de presentación superior.</p>
+                        <button class="btn-galeria" onclick="abrirGaleriaFlotante('premium')"><i class="fa-solid fa-images"></i> Ver Ejemplos Reales (37)</button>
+                    </div>
+                </div>
+
+                <!-- 2. LÍNEA ESTÁNDAR -->
+                <div class="tarjeta-portada">
+                    <div class="img-portada-contenedor">
+                        <span class="badge-precio">Base: $85.000</span>
+                        <img src="img/portada-estandar-1.jpg" alt="Línea Estándar" onerror="this.src='https://via.placeholder.com/300x320/0b0f14/00f0ff?text=L%C3%ADnea+Est%C3%A1ndar'">
+                    </div>
+                    <div class="info-portada">
+                        <h3>Línea Estándar</h3>
+                        <p>Confección reforzada a 2 hilos con sistema clásico de 2 broches en cuello. El balance perfecto entre economía y máxima durabilidad para el uso diario en actividades operativas.</p>
+                        <button class="btn-galeria" onclick="abrirGaleriaFlotante('estandar')"><i class="fa-solid fa-images"></i> Ver Ejemplos Reales (22)</button>
+                    </div>
+                </div>
+
+                <!-- 3. PRO EXCLUSIVAS -->
                 <div class="tarjeta-portada destacada-pro">
                     <div class="img-portada-contenedor">
                         <span class="badge-precio pro">A Convenir</span>
-                        <img src="img/portada-exclusiva-1.jpg" alt="PRO Exclusivas">
+                        <img src="img/portada-exclusiva-1.jpg" alt="PRO Exclusivas" onerror="this.src='https://via.placeholder.com/300x320/0b0f14/bf55ec?text=PRO+Exclusivas'">
                     </div>
                     <div class="info-portada">
                         <h3>PRO Exclusivas</h3>
                         <p>Camisas únicas con diseños premium de gran formato y artes personalizados. El valor de la prenda se ajusta de acuerdo a la complejidad de los bordados, combinación de colores y requerimientos gráficos específicos.</p>
-                        <button class="btn-galeria btn-pro-galeria" onclick="abrirGaleriaFlotante('pro')"><i class="fa-solid fa-images"></i> Ver Ejemplos Reales (11)</button>
+                        <button class="btn-galeria btn-pro-galeria" onclick="abrirGaleriaFlotante('pro')"><i class="fa-solid fa-images"></i> Ver Ejemplos Reales (14)</button>
                     </div>
                 </div>
 
+                <!-- 4. PREMIUM DAMA -->
                 <div class="tarjeta-portada destacada-dama">
                     <div class="img-portada-contenedor">
                         <span class="badge-precio dama">Precio: $95.000</span>
-                        <img src="img/portada-dama-1.jpg" alt="Premium Dama">
+                        <img src="img/portada-dama-1.jpg" alt="Premium Dama" onerror="this.src='https://via.placeholder.com/300x320/0b0f14/ff64b4?text=Premium+Dama'">
                     </div>
                     <div class="info-portada">
                         <h3>Premium Dama</h3>
@@ -361,34 +402,11 @@
                     </div>
                 </div>
 
-                <div class="tarjeta-portada">
-                    <div class="img-portada-contenedor">
-                        <span class="badge-precio">Base: $85.000</span>
-                        <img src="img/portada-estandar-1.jpg" alt="Línea Estándar">
-                    </div>
-                    <div class="info-portada">
-                        <h3>Línea Estándar</h3>
-                        <p>Confección reforzada a 2 hilos con sistema clásico de 2 broches en cuello. El balance perfecto entre economía y máxima durabilidad para el uso diario en actividades operativas.</p>
-                        <button class="btn-galeria" onclick="abrirGaleriaFlotante('estandar')"><i class="fa-solid fa-images"></i> Ver Ejemplos Reales (18)</button>
-                    </div>
-                </div>
-
-                <div class="tarjeta-portada">
-                    <div class="img-portada-contenedor">
-                        <span class="badge-precio">Base: $95.000</span>
-                        <img src="img/portada-premium-1.jpg" alt="Línea Premium">
-                    </div>
-                    <div class="info-portada">
-                        <h3>Línea Premium</h3>
-                        <p>Confección de alta gama reforzada a 3 hilos con un sistema robusto de 3 broches. Ideal para los entornos de trabajo pesado más exigentes y acabados de presentación superior.</p>
-                        <button class="btn-galeria" onclick="abrirGaleriaFlotante('premium')"><i class="fa-solid fa-images"></i> Ver Ejemplos Reales (15)</button>
-                    </div>
-                </div>
-
+                <!-- 5. CAPUCHONES EN DRILL -->
                 <div class="tarjeta-portada destacada-capuchon">
                     <div class="img-portada-contenedor">
                         <span class="badge-precio capuchon">Unidad: $16.000<br>X Mayor*: $14.000</span>
-                        <img src="img/portada-capuchon-drill.jpg" alt="Capuchones de Drill">
+                        <img src="img/portada-capuchon-drill.jpg" alt="Capuchones de Drill" onerror="this.src='https://via.placeholder.com/300x320/0b0f14/a6ff00?text=Capuchon+Drill'">
                     </div>
                     <div class="info-portada">
                         <h3>Capuchones en Drill</h3>
@@ -397,10 +415,11 @@
                     </div>
                 </div>
 
+                <!-- 6. CAPUCHONES EN DACRÓN -->
                 <div class="tarjeta-portada destacada-capuchon">
                     <div class="img-portada-contenedor">
                         <span class="badge-precio capuchon">Unidad: $12.000<br>X Mayor*: $10.000</span>
-                        <img src="img/portada-capuchon-dracon.jpg" alt="Capuchones de Dacrón">
+                        <img src="img/portada-capuchon-dracon.jpg" alt="Capuchones de Dacrón" onerror="this.src='https://via.placeholder.com/300x320/0b0f14/a6ff00?text=Capuchon+Dacron'">
                     </div>
                     <div class="info-portada">
                         <h3>Capuchones en Dacrón</h3>
@@ -429,10 +448,9 @@
         </div>
 
         <div id="pantalla-pagos" class="seccion-pantalla">
-            <div class="grid-pagos-envios">
-                
+            <div class="contenedor-pago-unico">
                 <div class="card-info-pago">
-                    <h3><i class="fa-solid fa-wallet"></i> Métodos y Formas de Pago</h3>
+                    <h3><i class="fa-solid fa-wallet"></i> Información de Pago</h3>
                     
                     <div class="pago-item">
                         <i class="fa-solid fa-circle-check" style="color: var(--neon-azul)"></i>
@@ -450,48 +468,18 @@
                         </div>
                     </div>
 
-                    <p style="color: var(--texto-gris); font-size: 0.88rem; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">Manejamos cuentas directas y seguras en:</p>
-                    <div class="marcas-pago">
-                        <div class="marca-tag nequi"><i class="fa-solid fa-mobile-screen"></i> NEQUI</div>
-                        <div class="marca-tag davi"><i class="fa-solid fa-building-columns"></i> DAVIPLATA</div>
-                        <div class="marca-tag bancolombia"><i class="fa-solid fa-credit-card"></i> BANCOLOMBIA</div>
+                    <div class="caja-bancolombia">
+                        <h4><i class="fa-solid fa-credit-card"></i> Transferencia Directa</h4>
+                        <p style="color: #cbd5e1; font-size: 0.9rem;">Llave Bancolombia:</p>
+                        <div class="llave-numero">3184250115</div>
                     </div>
                 </div>
-
-                <div class="card-info-pago envios">
-                    <h3><i class="fa-solid fa-truck-fast"></i> Cobertura y Envíos</h3>
-                    
-                    <div class="pago-item">
-                        <i class="fa-solid fa-globe" style="color: #ffaa00"></i>
-                        <div class="pago-texto">
-                            <strong>Despachos a todo nivel:</strong>
-                            Contamos con la capacidad logística de realizar envíos a nivel nacional e internacional.
-                        </div>
-                    </div>
-
-                    <div class="pago-item">
-                        <i class="fa-solid fa-box-open" style="color: #ffaa00"></i>
-                        <div class="pago-texto">
-                            <strong>Empresa de Mensajería:</strong>
-                            Despachamos tus pedidos principalmente a través de Interrapidísimo, o por la transportadora de tu entera preferencia si así lo deseas.
-                        </div>
-                    </div>
-
-                    <div class="pago-item">
-                        <i class="fa-solid fa-hand-holding-dollar" style="color: #ffaa00"></i>
-                        <div class="pago-texto">
-                            <strong>Responsabilidad del flete:</strong>
-                            Ten en cuenta que el cliente final debe asumir en su totalidad el costo del envío al recibir o despachar la mercancía.
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
     </div>
 
-    <a href="https://api.whatsapp.com/send?phone=573184250115&text=*Hola!%20Vengo%20desde%20el%20Cat%C3%A1logo%20Digital%20y%20me%20gustar%C3%ADa%20agendar%20una%20cotizaci%C3%B3n%20para%20unas%20prendas.*" 
+    <a href="https://api.whatsapp.com/send?phone=573184250115&text=*Hola!%20Vengo%20desde%20el%20Cat%C3%A1logo%20Digital%20de%20Reyand%20InduPro%20y%20me%20gustar%C3%ADa%20agendar%20una%20cotizaci%C3%B3n.*" 
        target="_blank" 
        class="btn-whatsapp-global">
         <i class="fa-brands fa-whatsapp" style="font-size: 1.5rem;"></i> Agendar por WhatsApp
@@ -499,11 +487,10 @@
 
     <script>
         const galeriaFotos = {
-            pro: Array.from({length: 11}, (_, i) => ({ ruta: `img/chaqueta-exclusiva-${i+1}.jpg`, nombre: `PRO Exclusiva - Ref ${i+1}` })),
+            pro: Array.from({length: 14}, (_, i) => ({ ruta: `img/chaqueta-exclusiva-${i+1}.jpg`, nombre: `PRO Exclusiva - Ref ${i+1}` })),
             dama: Array.from({length: 9}, (_, i) => ({ ruta: `img/chaqueta-dama-${i+1}.jpg`, nombre: `Premium Dama - Muestra ${i+1}` })),
-            estandar: Array.from({length: 18}, (_, i) => ({ ruta: `img/chaqueta-estandar-${i+1}.jpg`, nombre: `Línea Estándar - Muestra ${i+1}` })),
-            premium: Array.from({length: 15}, (_, i) => ({ ruta: `img/chaqueta-premium-${i+1}.jpg`, nombre: `Línea Premium - Muestra ${i+1}` })),
-            // Nuevas galerías de capuchones configuradas a 6 imágenes cada una:
+            estandar: Array.from({length: 22}, (_, i) => ({ ruta: `img/chaqueta-estandar-${i+1}.jpg`, nombre: `Línea Estándar - Muestra ${i+1}` })),
+            premium: Array.from({length: 37}, (_, i) => ({ ruta: `img/chaqueta-premium-${i+1}.jpg`, nombre: `Línea Premium - Muestra ${i+1}` })),
             capuchonDrill: Array.from({length: 6}, (_, i) => ({ ruta: `img/capuchon-drill-${i+1}.jpg`, nombre: `Capuchón Drill - Muestra ${i+1}` })),
             capuchonDacron: Array.from({length: 6}, (_, i) => ({ ruta: `img/capuchon-dracon-${i+1}.jpg`, nombre: `Capuchón Dacrón - Muestra ${i+1}` }))
         };
@@ -535,7 +522,7 @@
             (galeriaFotos[linea] || []).forEach(item => {
                 contenedorGrid.innerHTML += `
                     <div class="img-item-galeria" onclick="abrirVisorDetalle('${item.ruta}', '${item.nombre}')">
-                        <img src="${item.ruta}" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/300x240/0b0f14/a6ff00?text=InduPro+JK'">
+                        <img src="${item.ruta}" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/300x240/0b0f14/a6ff00?text=Reyand+InduPro'">
                         <div class="capa-lupa"><i class="fa-solid fa-magnifying-glass-plus"></i> Ampliar Imagen</div>
                     </div>
                 `;
