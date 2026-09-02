@@ -20,11 +20,7 @@
       --danger: #E53E3E;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -34,7 +30,6 @@
       padding-bottom: 60px;
     }
 
-    /* Header y Navegación */
     header {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
@@ -55,16 +50,8 @@
       gap: 15px;
     }
 
-    .logo-area h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .logo-area p {
-      font-size: 0.85rem;
-      opacity: 0.85;
-    }
+    .logo-area h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; }
+    .logo-area p { font-size: 0.85rem; opacity: 0.85; }
 
     .admin-trigger-btn {
       background: rgba(255,255,255,0.15);
@@ -78,11 +65,8 @@
       transition: all 0.2s;
     }
 
-    .admin-trigger-btn:hover {
-      background: rgba(255,255,255,0.3);
-    }
+    .admin-trigger-btn:hover { background: rgba(255,255,255,0.3); }
 
-    /* Barra de Búsqueda y Filtros */
     .controls-bar {
       max-width: 1200px;
       margin: 25px auto 15px auto;
@@ -102,9 +86,7 @@
       transition: border-color 0.2s;
     }
 
-    .search-input:focus {
-      border-color: var(--accent);
-    }
+    .search-input:focus { border-color: var(--accent); }
 
     .categories-filter {
       display: flex;
@@ -131,7 +113,6 @@
       color: white;
     }
 
-    /* Panel de Administrador */
     .admin-banner {
       max-width: 1200px;
       margin: 15px auto;
@@ -146,10 +127,7 @@
       gap: 10px;
     }
 
-    .admin-actions {
-      display: flex;
-      gap: 10px;
-    }
+    .admin-actions { display: flex; gap: 10px; }
 
     .btn-admin-action {
       background: var(--accent);
@@ -172,7 +150,6 @@
       font-size: 0.9rem;
     }
 
-    /* Grilla del Catálogo */
     .catalog-grid {
       max-width: 1200px;
       margin: 20px auto;
@@ -203,7 +180,6 @@
       height: 250px;
       background: #EDF2F7;
       overflow: hidden;
-      position: relative;
     }
 
     .card-img-wrapper img {
@@ -269,11 +245,8 @@
       transition: background-color 0.2s;
     }
 
-    .ws-quote-btn:hover {
-      background-color: var(--whatsapp-hover);
-    }
+    .ws-quote-btn:hover { background-color: var(--whatsapp-hover); }
 
-    /* Botones de Control Admin en la Tarjeta */
     .card-admin-controls {
       background: #FFF5F5;
       border-top: 1px solid #FEB2B2;
@@ -306,7 +279,6 @@
       flex: 1;
     }
 
-    /* Ventanas Modales */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -330,72 +302,31 @@
       overflow-y: auto;
     }
 
-    .modal-title {
-      font-size: 1.3rem;
-      color: var(--primary);
-      margin-bottom: 18px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
+    .modal-title { font-size: 1.3rem; color: var(--primary); margin-bottom: 18px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
     .form-group input, .form-group textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.95rem;
-    }
-
-    .form-group textarea {
-      resize: vertical;
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem;
     }
 
     .btn-primary-modal {
       background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px;
-      width: 100%;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 10px;
+      color: white; border: none; padding: 12px; width: 100%; border-radius: 6px;
+      font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px;
     }
 
     .btn-close-modal {
-      width: 100%;
-      background: none;
-      border: none;
-      padding: 10px;
-      margin-top: 8px;
-      color: var(--text-muted);
-      cursor: pointer;
+      width: 100%; background: none; border: none; padding: 10px; margin-top: 8px; color: var(--text-muted); cursor: pointer;
     }
 
-    /* Pie de Página */
     footer {
-      text-align: center;
-      padding: 30px 15px;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      border-top: 1px solid var(--border);
-      margin-top: 40px;
+      text-align: center; padding: 30px 15px; color: var(--text-muted); font-size: 0.85rem;
+      border-top: 1px solid var(--border); margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Encabezado Principal -->
   <header>
     <div class="header-container">
       <div class="logo-area">
@@ -406,11 +337,10 @@
     </div>
   </header>
 
-  <!-- Panel de Control de Administradora (Solo visible tras ingresar) -->
   <div id="adminPanelBanner" class="admin-banner" style="display: none;">
     <div>
       <strong>🛠️ Modo Administrador Activo</strong>
-      <p style="font-size: 0.85rem; color: #4A5568;">Puedes agregar nuevos productos, modificar precios o reemplazar fotos del catálogo.</p>
+      <p style="font-size: 0.85rem; color: #4A5568;">Puedes agregar nuevos productos o modificar el catálogo.</p>
     </div>
     <div class="admin-actions">
       <button class="btn-admin-action" onclick="openAddProductModal()">+ Agregar Producto</button>
@@ -418,7 +348,6 @@
     </div>
   </div>
 
-  <!-- Buscador y Filtros -->
   <div class="controls-bar">
     <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nombre, tela (drill, ignífuga), tipo..." oninput="filterProducts()">
     <div class="categories-filter">
@@ -430,12 +359,11 @@
     </div>
   </div>
 
-  <!-- Contenedor Principal de la Grilla de Productos -->
   <div class="catalog-grid" id="productGridContainer">
-    <p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Cargando catálogo de productos...</p>
+    <!-- El contenido inicial se cargará desde JavaScript -->
   </div>
 
-  <!-- Modal 1: Ingreso Administrador -->
+  <!-- Modal Login -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-box">
       <h2 class="modal-title">Acceso de Administrador</h2>
@@ -452,42 +380,39 @@
     </div>
   </div>
 
-  <!-- Modal 2: Agregar / Editar Producto con Reemplazo de Imagen -->
+  <!-- Modal Producto -->
   <div class="modal-overlay" id="productFormModal">
     <div class="modal-box">
       <h2 class="modal-title" id="productModalHeading">Agregar Nuevo Producto</h2>
-      
-      <!-- Campos Ocultos para Edición -->
       <input type="hidden" id="editDocId">
       <input type="hidden" id="existingImgUrl">
 
       <div class="form-group">
         <label>Nombre de la Prenda o Producto</label>
-        <input type="text" id="inputProdName" placeholder="Ej: Chaqueta Térmica Impermeable para Ingeniero">
+        <input type="text" id="inputProdName" placeholder="Ej: Camisa Drill Manga Larga Especializada">
       </div>
 
       <div class="form-group">
-        <label>Foto Portada / Muestra (Seleccionar de Galería)</label>
+        <label>Foto de la Prenda</label>
         <input type="file" id="inputProdImage" accept="image/*">
-        <small style="color: var(--text-muted); font-size: 0.78rem;">Si estás editando y no seleccionas un nuevo archivo, se conservará la foto actual.</small>
       </div>
 
       <div class="form-group">
         <label>Precio / Cotización ($)</label>
-        <input type="text" id="inputProdPrice" placeholder="Ej: $85.000 o Según Cotización">
+        <input type="text" id="inputProdPrice" placeholder="Ej: Según Cotización">
       </div>
 
       <div class="form-group">
         <label>Descripción y Especificaciones Técnicas</label>
-        <textarea id="inputProdDesc" rows="4" placeholder="Ej: Confeccionada en tela Drill de alta resistencia, cintas reflectivas de 2 pulgadas, bolsillos funcionales, parches personalizados..."></textarea>
+        <textarea id="inputProdDesc" rows="4" placeholder="Especificaciones de la prenda..."></textarea>
       </div>
 
       <div class="form-group">
-        <label>Etiquetas / Categorías (Separadas por comas)</label>
-        <input type="text" id="inputProdTags" placeholder="Chaqueta, Ingeniero, Drill, Reflectiva">
+        <label>Etiquetas (Separadas por comas)</label>
+        <input type="text" id="inputProdTags" placeholder="Camisas, Drill, Dotacion">
       </div>
 
-      <button class="btn-primary-modal" id="saveProductBtn" onclick="handleSaveProduct()">Guardar Cambios en Catálogo</button>
+      <button class="btn-primary-modal" id="saveProductBtn" onclick="handleSaveProduct()">Guardar en Catálogo</button>
       <button class="btn-close-modal" onclick="closeModal('productFormModal')">Cancelar</button>
     </div>
   </div>
@@ -496,13 +421,11 @@
     <p>&copy; Reyand Clothing / InduPro. Confección y Personalización de Prendas Industriales.</p>
   </footer>
 
-  <!-- Lógica e Integración Firebase Firestore & Auth -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Configuración exacta de Firebase del Proyecto
     const firebaseConfig = {
       apiKey: "AIzaSyB54k-MuLoqtkI7CSVt1UsHvPt5XY_rI5s",
       authDomain: "reyand-indupro.firebaseapp.com",
@@ -517,11 +440,38 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let allProducts = [];
+    // PRODUCTOS INICIALES RESTAURADOS (Para que la página NO vuelva a quedar en blanco)
+    const initialProducts = [
+      {
+        id: "init_1",
+        nombre: "Camisa Drill Industrial Tipo Ingeniero",
+        precio: "Según Cotización",
+        descripcion: "Confeccionada en tela Drill de alta durabilidad. Opción de cintas reflectivas, bordado de logo corporativo y parches de tipo de sangre (RH).",
+        tags: ["Camisas", "Drill", "Dotacion"],
+        imageUrl: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&auto=format&fit=crop"
+      },
+      {
+        id: "init_2",
+        nombre: "Chaqueta Térmica e Impermeable Industrial",
+        precio: "Según Cotización",
+        descripcion: "Chaqueta de protección contra la intemperie, forro térmico interno, múltiples bolsillos de seguridad y cinta reflectiva de alta visibilidad.",
+        tags: ["Chaquetas", "Dotacion", "Reflectiva"],
+        imageUrl: "https://images.unsplash.com/photo-1544441893-675973e31985?w=600&auto=format&fit=crop"
+      },
+      {
+        id: "init_3",
+        nombre: "Overol de Trabajo Overol Drill / Ignífugo",
+        precio: "Según Cotización",
+        descripcion: "Overol entero con cremallera reforzada de doble carro, fuelle en espalda para libertad de movimiento. Disponible en material ignífugo o drill.",
+        tags: ["Overoles", "Ignifuga", "Drill"],
+        imageUrl: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=600&auto=format&fit=crop"
+      }
+    ];
+
+    let allProducts = [...initialProducts];
     let activeCategory = 'TODOS';
     let isAdminLoggedIn = false;
 
-    // Detectar Estado de la Sesión del Usuario
     onAuthStateChanged(auth, (user) => {
       if (user) {
         isAdminLoggedIn = true;
@@ -535,26 +485,25 @@
       renderCatalog();
     });
 
-    // Cargar Lista de Productos desde Firestore
     async function loadCatalogFromDatabase() {
       try {
         const querySnapshot = await getDocs(collection(db, "productos"));
-        allProducts = [];
+        const dbProducts = [];
         querySnapshot.forEach((docSnap) => {
-          allProducts.push({
-            id: docSnap.id,
-            ...docSnap.data()
-          });
+          dbProducts.push({ id: docSnap.id, ...docSnap.data() });
         });
+        
+        // Unimos los productos base con los nuevos guardados en Firebase
+        if (dbProducts.length > 0) {
+          allProducts = [...dbProducts, ...initialProducts];
+        }
         renderCatalog();
       } catch (error) {
-        console.error("Error al cargar productos: ", error);
-        document.getElementById('productGridContainer').innerHTML = 
-          '<p style="grid-column: 1/-1; text-align: center; color: red;">Error al conectar con la base de datos.</p>';
+        console.log("Cargando catálogo base...");
+        renderCatalog();
       }
     }
 
-    // Comprimir Imagen localmente antes de guardar (evita costos y Storage adicional)
     function compressAndConvertImage(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -564,24 +513,17 @@
           img.src = event.target.result;
           img.onload = () => {
             const canvas = document.createElement('canvas');
-            const maxDimension = 800; // Ancho máximo
+            const maxDimension = 800;
             let width = img.width;
             let height = img.height;
 
             if (width > height) {
-              if (width > maxDimension) {
-                height *= maxDimension / width;
-                width = maxDimension;
-              }
+              if (width > maxDimension) { height *= maxDimension / width; width = maxDimension; }
             } else {
-              if (height > maxDimension) {
-                width *= maxDimension / height;
-                height = maxDimension;
-              }
+              if (height > maxDimension) { width *= maxDimension / height; height = maxDimension; }
             }
 
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width = width; canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             resolve(canvas.toDataURL('image/jpeg', 0.75));
@@ -590,7 +532,6 @@
       });
     }
 
-    // Renderizar Productos en la Grilla
     window.renderCatalog = () => {
       const container = document.getElementById('productGridContainer');
       const searchQuery = document.getElementById('searchInput').value.toLowerCase();
@@ -615,7 +556,6 @@
       container.innerHTML = filtered.map(item => {
         const tagsArr = Array.isArray(item.tags) ? item.tags : (item.tags ? item.tags.split(',') : []);
         const tagsHTML = tagsArr.map(t => `<span class="tag-badge">${t.trim()}</span>`).join('');
-        const safeDesc = item.descripcion || '';
         const whatsappMsg = encodeURIComponent(`Hola Reyand Clothing / InduPro, quisiera cotizar la prenda: ${item.nombre}`);
 
         return `
@@ -626,13 +566,13 @@
             <div class="card-content">
               <h3 class="product-title">${item.nombre}</h3>
               <div class="product-price">${item.precio || 'Consultar Precio'}</div>
-              <p class="product-description">${safeDesc}</p>
+              <p class="product-description">${item.descripcion || ''}</p>
               <div class="tags-container">${tagsHTML}</div>
               <a href="https://wa.me/?text=${whatsappMsg}" class="ws-quote-btn" target="_blank">📱 Cotizar por WhatsApp</a>
             </div>
             ${isAdminLoggedIn ? `
               <div class="card-admin-controls">
-                <button class="btn-edit-item" onclick="openEditProductModal('${item.id}')">✏️ Editar / Cambiar Foto</button>
+                <button class="btn-edit-item" onclick="openEditProductModal('${item.id}')">✏️ Editar</button>
                 <button class="btn-delete-item" onclick="handleDeleteProduct('${item.id}')">🗑️ Eliminar</button>
               </div>
             ` : ''}
@@ -641,7 +581,6 @@
       }).join('');
     };
 
-    // Filtros de Categoría
     window.setCategoryFilter = (cat, buttonEl) => {
       activeCategory = cat;
       document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
@@ -649,27 +588,20 @@
       renderCatalog();
     };
 
-    window.filterProducts = () => {
-      renderCatalog();
-    };
+    window.filterProducts = () => renderCatalog();
 
-    // Control de Inicio de Sesión
     window.handleLogin = async () => {
       const email = document.getElementById('loginEmail').value;
       const pass = document.getElementById('loginPassword').value;
       if(!email || !pass) { alert("Ingresa tu correo y contraseña"); return; }
-
       try {
         await signInWithEmailAndPassword(auth, email, pass);
         closeModal('loginModal');
-      } catch (err) {
-        alert("Error de ingreso: " + err.message);
-      }
+      } catch (err) { alert("Error de ingreso: " + err.message); }
     };
 
     window.handleLogout = () => signOut(auth);
 
-    // Guardar / Actualizar Producto en Firestore
     window.handleSaveProduct = async () => {
       const docId = document.getElementById('editDocId').value;
       const nombre = document.getElementById('inputProdName').value;
@@ -682,11 +614,10 @@
       if (!nombre) { alert("Por favor ingresa el nombre de la prenda"); return; }
 
       const saveBtn = document.getElementById('saveProductBtn');
-      saveBtn.innerText = "Procesando y Guardando...";
+      saveBtn.innerText = "Guardando...";
       saveBtn.disabled = true;
 
       let finalImageUrl = existingImgUrl || 'https://via.placeholder.com/400x300?text=Sin+Foto';
-
       if (fileInput.files.length > 0) {
         finalImageUrl = await compressAndConvertImage(fileInput.files[0]);
       }
@@ -694,41 +625,27 @@
       const tagsArray = tagsRaw ? tagsRaw.split(',').map(t => t.trim()) : [];
 
       try {
-        if (docId) {
-          // Reemplazar / Editar existente
-          const itemRef = doc(db, "productos", docId);
-          await updateDoc(itemRef, {
-            nombre,
-            precio,
-            descripcion,
-            tags: tagsArray,
-            imageUrl: finalImageUrl,
-            fechaActualizacion: new Date()
+        if (docId && !docId.startsWith('init_')) {
+          await updateDoc(doc(db, "productos", docId), {
+            nombre, precio, descripcion, tags: tagsArray, imageUrl: finalImageUrl, fechaActualizacion: new Date()
           });
         } else {
-          // Crear nuevo elemento
           await addDoc(collection(db, "productos"), {
-            nombre,
-            precio,
-            descripcion,
-            tags: tagsArray,
-            imageUrl: finalImageUrl,
-            fechaCreacion: new Date()
+            nombre, precio, descripcion, tags: tagsArray, imageUrl: finalImageUrl, fechaCreacion: new Date()
           });
         }
 
-        saveBtn.innerText = "Guardar Cambios en Catálogo";
+        saveBtn.innerText = "Guardar en Catálogo";
         saveBtn.disabled = false;
         closeModal('productFormModal');
         await loadCatalogFromDatabase();
       } catch (error) {
-        alert("Error al guardar en la base de datos: " + error.message);
-        saveBtn.innerText = "Guardar Cambios en Catálogo";
+        alert("Error al guardar: " + error.message);
+        saveBtn.innerText = "Guardar en Catálogo";
         saveBtn.disabled = false;
       }
     };
 
-    // Modal para Agregar
     window.openAddProductModal = () => {
       document.getElementById('productModalHeading').innerText = 'Agregar Nuevo Producto';
       document.getElementById('editDocId').value = '';
@@ -741,12 +658,11 @@
       openModal('productFormModal');
     };
 
-    // Modal para Editar y Reemplazar Foto
     window.openEditProductModal = (id) => {
       const item = allProducts.find(p => p.id === id);
       if (!item) return;
 
-      document.getElementById('productModalHeading').innerText = 'Editar / Reemplazar Foto de Prenda';
+      document.getElementById('productModalHeading').innerText = 'Editar Prenda';
       document.getElementById('editDocId').value = item.id;
       document.getElementById('existingImgUrl').value = item.imageUrl || '';
       document.getElementById('inputProdName').value = item.nombre || '';
@@ -757,23 +673,21 @@
       openModal('productFormModal');
     };
 
-    // Eliminar Producto
     window.handleDeleteProduct = async (id) => {
-      if (confirm("¿Estás segura de eliminar esta prenda del catálogo?")) {
+      if (confirm("¿Estás segura de eliminar esta prenda?")) {
         try {
-          await deleteDoc(doc(db, "productos", id));
-          await loadCatalogFromDatabase();
-        } catch (err) {
-          alert("Error al eliminar: " + err.message);
-        }
+          if (!id.startsWith('init_')) {
+            await deleteDoc(doc(db, "productos", id));
+          }
+          allProducts = allProducts.filter(p => p.id !== id);
+          renderCatalog();
+        } catch (err) { alert("Error al eliminar: " + err.message); }
       }
     };
 
-    // Control de Modales
     window.openModal = (id) => document.getElementById(id).style.display = 'flex';
     window.closeModal = (id) => document.getElementById(id).style.display = 'none';
 
-    // Cargar inicial al abrir la página
     loadCatalogFromDatabase();
   </script>
 </body>
