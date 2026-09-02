@@ -1,694 +1,649 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reyand Clothing / InduPro - Catálogo de Dotaciones Industriales</title>
-  <style>
-    :root {
-      --primary: #1A365D;
-      --primary-dark: #0F2942;
-      --accent: #2B6CB0;
-      --accent-hover: #2C5282;
-      --whatsapp: #25D366;
-      --whatsapp-hover: #1EBE5D;
-      --bg: #F7FAFC;
-      --card-bg: #FFFFFF;
-      --text: #2D3748;
-      --text-muted: #718096;
-      --border: #E2E8F0;
-      --danger: #E53E3E;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reyand InduPro | Catálogo Industrial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SDKs de Firebase v9 (Auth, Firestore y Storage) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+        const firebaseConfig = {
+            apiKey: "AIzaSyB54k-MuLoqtkI7CSVt1UsHvPt5XY_rI5s",
+            authDomain: "reyand-indupro.firebaseapp.com",
+            projectId: "reyand-indupro",
+            storageBucket: "reyand-indupro.firebasestorage.app",
+            messagingSenderId: "927807451159",
+            appId: "1:927807451159:web:e9a599ecfab290abe16c52",
+            measurementId: "G-6FBN8NPH6X"
+        };
 
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding-bottom: 60px;
-    }
+        const app = initializeApp(firebaseConfig);
+        window.auth = getAuth(app);
+        window.db = getFirestore(app);
+        window.storage = getStorage(app);
+        window.firebaseFunctions = { 
+            signInWithEmailAndPassword, signOut, onAuthStateChanged, 
+            collection, addDoc, getDocs, deleteDoc, doc, updateDoc,
+            ref, uploadBytes, getDownloadURL 
+        };
+    </script>
 
-    header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      padding: 20px 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+    <style>
+        :root {
+            --bg-principal: #040609;
+            --bg-tarjeta: #0b0f14;
+            --neon-azul: #00f0ff;
+            --neon-morado: #bf55ec;
+            --neon-rosado: #ff64b4;
+            --neon-verde: #25D366;
+            --neon-alerta: #ffaa00;
+            --texto-blanco: #ffffff;
+            --texto-gris: #8b949e;
+            --rojo-eliminar: #ff3344;
+        }
 
-    .header-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-principal); color: var(--texto-blanco); }
 
-    .logo-area h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; }
-    .logo-area p { font-size: 0.85rem; opacity: 0.85; }
+        /* ENCABEZADO */
+        header {
+            text-align: center; padding: 35px 20px 20px 20px;
+            background: linear-gradient(180deg, #020406 0%, #040609 100%);
+            position: relative;
+        }
 
-    .admin-trigger-btn {
-      background: rgba(255,255,255,0.15);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
+        /* CANDADO DISCRETO MODERADOR (AUMENTADO Y DISCRETO ARRIBA A LA DERECHA) */
+        .btn-candado-moderador {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.05); color: var(--texto-gris);
+            width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-candado-moderador:hover { color: var(--neon-alerta); border-color: var(--neon-alerta); box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
+        .modo-moderador-activo .btn-candado-moderador { color: var(--neon-verde); border-color: var(--neon-verde); box-shadow: 0 0 12px var(--neon-verde); }
 
-    .admin-trigger-btn:hover { background: rgba(255,255,255,0.3); }
+        /* LOGO MÁS GRANDE */
+        .logo-box img { 
+            max-width: 170px; /* Tamaño más grande para mayor visibilidad */
+            width: 100%; height: auto;
+            border-radius: 50%; box-shadow: 0 0 25px var(--neon-azul); margin-bottom: 15px; 
+            transition: transform 0.3s ease;
+        }
+        .logo-box img:hover { transform: scale(1.04); }
 
-    .controls-bar {
-      max-width: 1200px;
-      margin: 25px auto 15px auto;
-      padding: 0 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
+        header h1 { font-size: 2.3rem; letter-spacing: 1px; color: white; }
+        header p { color: var(--texto-gris); font-size: 0.95rem; margin-top: 6px; }
 
-    .search-input {
-      width: 100%;
-      padding: 12px 18px;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      font-size: 1rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+        .redes-header { display: flex; justify-content: center; gap: 18px; margin-top: 15px; }
+        .redes-header a {
+            color: white; font-size: 1.3rem; width: 40px; height: 40px; border-radius: 50%;
+            background: #0d131a; display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; text-decoration: none;
+        }
+        .redes-header a:hover { transform: translateY(-3px); }
+        .redes-header a.fb:hover { color: #1877f2; border-color: #1877f2; box-shadow: 0 0 12px rgba(24,119,242,0.4); }
+        .redes-header a.ig:hover { color: #e1306c; border-color: #e1306c; box-shadow: 0 0 12px rgba(225,48,108,0.4); }
+        .redes-header a.tk:hover { color: #00f2fe; border-color: #00f2fe; box-shadow: 0 0 12px rgba(0,242,254,0.4); }
 
-    .search-input:focus { border-color: var(--accent); }
+        /* NAVEGACIÓN */
+        nav {
+            display: flex; justify-content: center; background: #020406;
+            border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 100; flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: transparent; border: none; color: var(--texto-gris);
+            padding: 16px 22px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            transition: 0.3s; border-bottom: 3px solid transparent;
+        }
+        .nav-btn:hover { color: white; }
+        .nav-btn.activo { color: var(--neon-azul); border-bottom-color: var(--neon-azul); }
 
-    .categories-filter {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 5px;
-    }
+        /* BANNER */
+        .banner-destacado {
+            background: linear-gradient(90deg, rgba(11, 15, 20, 0.95) 0%, rgba(2, 4, 6, 0.95) 100%);
+            border: 2px dashed var(--neon-alerta); border-left: 6px solid var(--neon-alerta);
+            max-width: 1160px; margin: 25px auto 5px auto; padding: 18px 25px; border-radius: 10px;
+            display: flex; align-items: center; gap: 20px; box-shadow: 0 0 20px rgba(255, 170, 0, 0.15);
+        }
+        .banner-destacado i { font-size: 2.2rem; color: var(--neon-alerta); }
+        .banner-destacado-texto h4 { color: #ffffff; font-size: 1.15rem; margin-bottom: 4px; text-transform: uppercase; }
+        .banner-destacado-texto p { color: #e2e8f0; font-size: 0.95rem; line-height: 1.5; }
+        .banner-destacado-texto strong { color: var(--neon-azul); }
 
-    .filter-chip {
-      background: #EDF2F7;
-      color: var(--text);
-      padding: 8px 16px;
-      border-radius: 20px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
+        /* CONTENEDOR */
+        .container { max-width: 1200px; margin: 20px auto 40px auto; padding: 0 20px; padding-bottom: 60px; }
+        .seccion-pantalla { display: none; }
+        .seccion-pantalla.activa { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .filter-chip.active, .filter-chip:hover {
-      background: var(--accent);
-      color: white;
-    }
+        .bienvenida-box {
+            background: var(--bg-tarjeta); border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 14px; padding: 35px; text-align: center; margin-bottom: 35px;
+        }
+        .bienvenida-box h2 { font-size: 1.8rem; color: var(--neon-azul); margin-bottom: 15px; }
+        .bienvenida-box p { color: #e2e8f0; line-height: 1.7; font-size: 1.05rem; max-width: 850px; margin: 0 auto 25px auto; }
 
-    .admin-banner {
-      max-width: 1200px;
-      margin: 15px auto;
-      padding: 15px 20px;
-      background: #EBF8FF;
-      border-left: 5px solid var(--accent);
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+        /* CATÁLOGO */
+        .grid-portadas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .tarjeta-portada {
+            background: var(--bg-tarjeta); border-radius: 14px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; display: flex; flex-direction: column; position: relative;
+        }
+        .tarjeta-portada:hover { border-color: var(--neon-azul); box-shadow: 0 5px 25px rgba(0, 240, 255, 0.15); }
+        
+        .img-portada-contenedor { width: 100%; height: 300px; background: #070a0e; position: relative; display: flex; justify-content: center; align-items: center; padding: 15px; }
+        .img-portada-contenedor img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
+        
+        .badge-estado {
+            position: absolute; top: 12px; left: 12px; padding: 5px 10px; border-radius: 4px;
+            font-size: 0.75rem; font-weight: bold; text-transform: uppercase; z-index: 10;
+        }
+        .badge-estado.promo { background: var(--neon-alerta); color: #000; }
+        .badge-estado.agotado { background: var(--rojo-eliminar); color: #fff; }
+        .badge-estado.nuevo { background: var(--neon-verde); color: #000; }
 
-    .admin-actions { display: flex; gap: 10px; }
+        .badge-precio {
+            position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.85);
+            color: var(--neon-azul); padding: 6px 12px; border-radius: 4px; font-weight: bold;
+            font-size: 0.85rem; border: 1px solid var(--neon-azul); z-index: 10;
+        }
 
-    .btn-admin-action {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
+        .info-portada { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 12px; }
+        .info-portada h3 { font-size: 1.25rem; color: white; }
+        .info-portada p { color: var(--texto-gris); font-size: 0.88rem; line-height: 1.5; flex-grow: 1; }
+        
+        .btn-galeria {
+            background: var(--neon-azul); color: #000; border: none; width: 100%; padding: 12px;
+            font-weight: bold; border-radius: 7px; cursor: pointer; transition: 0.3s; font-size: 0.88rem;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-galeria:hover { background: white; box-shadow: 0 0 12px white; }
 
-    .btn-admin-logout {
-      background: #718096;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
+        /* HERRAMIENTAS DE MODERADOR */
+        .panel-acciones-item {
+            display: none; background: #160305; border-top: 1px solid var(--rojo-eliminar);
+            padding: 10px; gap: 8px; justify-content: space-between;
+        }
+        .modo-moderador-activo .panel-acciones-item { display: flex; }
+        .btn-mod { padding: 6px 12px; border-radius: 4px; border: none; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        .btn-mod.eliminar { background: var(--rojo-eliminar); color: white; }
+        .btn-mod.estado { background: var(--neon-alerta); color: black; }
 
-    .catalog-grid {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 15px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 25px;
-    }
+        /* MODALES */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92); z-index: 300; justify-content: center; align-items: center; padding: 20px;
+        }
+        .caja-modal {
+            background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px;
+            max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 25px; position: relative;
+        }
+        .caja-login { max-width: 420px; border-color: var(--neon-alerta); text-align: center; }
+        .campo-input { width: 100%; padding: 12px; background: #040609; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; margin-bottom: 15px; font-size: 0.95rem; }
+        .btn-entrar { background: var(--neon-alerta); color: black; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; }
 
-    .product-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
+        /* GALERÍA EN MODAL CON NÚMERO DE MUESTRA */
+        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .galeria-item { background: #040609; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; }
+        .galeria-item img { width: 100%; height: 220px; object-fit: contain; padding: 10px; background: #070a0e; }
+        
+        /* ETIQUETA CON EL NÚMERO DE PRODUCTO (#1, #2, #3) */
+        .numero-muestra-tag {
+            position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.85);
+            color: var(--neon-azul); border: 1px solid var(--neon-azul); font-weight: bold;
+            font-size: 0.8rem; padding: 3px 8px; border-radius: 4px; z-index: 5;
+        }
 
-    .product-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    }
+        .btn-cotizar-muestra {
+            background: var(--neon-verde); color: white; border: none; width: 100%; padding: 10px;
+            font-size: 0.85rem; font-weight: bold; cursor: pointer; text-decoration: none; display: flex;
+            align-items: center; justify-content: center; gap: 6px;
+        }
 
-    .card-img-wrapper {
-      width: 100%;
-      height: 250px;
-      background: #EDF2F7;
-      overflow: hidden;
-    }
+        /* PANEL DE CREACIÓN DESDE EL CELULAR */
+        .caja-panel-gestion {
+            background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px;
+            padding: 25px; margin-bottom: 30px; display: none;
+        }
+        .modo-moderador-activo .caja-panel-gestion { display: block; }
+        .caja-panel-gestion h3 { color: var(--neon-azul); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
 
-    .card-img-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+        /* BOTÓN FLOTANTE WHATSAPP */
+        .btn-whatsapp-global {
+            position: fixed; bottom: 25px; right: 25px; background: var(--neon-verde); color: white;
+            padding: 14px 22px; border-radius: 50px; font-weight: bold; font-size: 1rem; text-decoration: none;
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 25px rgba(37, 211, 102, 0.4); z-index: 150;
+        }
 
-    .card-content {
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .product-title {
-      font-size: 1.15rem;
-      color: var(--primary);
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .product-price {
-      font-size: 1.1rem;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .product-description {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 15px;
-      flex-grow: 1;
-      white-space: pre-line;
-    }
-
-    .tags-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 15px;
-    }
-
-    .tag-badge {
-      background: #EBF8FF;
-      color: var(--accent);
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-weight: 600;
-    }
-
-    .ws-quote-btn {
-      background-color: var(--whatsapp);
-      color: white;
-      text-decoration: none;
-      text-align: center;
-      padding: 11px;
-      border-radius: 8px;
-      font-weight: 700;
-      display: block;
-      transition: background-color 0.2s;
-    }
-
-    .ws-quote-btn:hover { background-color: var(--whatsapp-hover); }
-
-    .card-admin-controls {
-      background: #FFF5F5;
-      border-top: 1px solid #FEB2B2;
-      padding: 10px;
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn-edit-item {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      flex: 1;
-    }
-
-    .btn-delete-item {
-      background: var(--danger);
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      flex: 1;
-    }
-
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(2px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 15px;
-    }
-
-    .modal-box {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-title { font-size: 1.3rem; color: var(--primary); margin-bottom: 18px; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
-    .form-group input, .form-group textarea {
-      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem;
-    }
-
-    .btn-primary-modal {
-      background-color: var(--primary);
-      color: white; border: none; padding: 12px; width: 100%; border-radius: 6px;
-      font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px;
-    }
-
-    .btn-close-modal {
-      width: 100%; background: none; border: none; padding: 10px; margin-top: 8px; color: var(--text-muted); cursor: pointer;
-    }
-
-    footer {
-      text-align: center; padding: 30px 15px; color: var(--text-muted); font-size: 0.85rem;
-      border-top: 1px solid var(--border); margin-top: 40px;
-    }
-  </style>
+        footer { background: #020406; border-top: 1px solid rgba(255,255,255,0.05); padding: 30px 20px; text-align: center; color: var(--texto-gris); font-size: 0.88rem; }
+        footer a { color: var(--texto-gris); text-decoration: none; margin: 0 8px; }
+        footer a:hover { color: var(--neon-azul); }
+    </style>
 </head>
 <body>
 
-  <header>
-    <div class="header-container">
-      <div class="logo-area">
-        <h1>Reyand Clothing / InduPro</h1>
-        <p>Dotaciones Industriales, Prendas de Protección y Confección Especializada</p>
-      </div>
-      <button class="admin-trigger-btn" id="loginTriggerBtn" onclick="openModal('loginModal')">🔒 Ingreso Administrador</button>
-    </div>
-  </header>
+    <header>
+        <!-- BOTÓN CANDADO DISCRETO MODERADOR -->
+        <button class="btn-candado-moderador" onclick="abrirModalLogin()" title="Acceso Moderador">
+            <i class="fa-solid fa-lock" id="icono-candado"></i>
+        </button>
 
-  <div id="adminPanelBanner" class="admin-banner" style="display: none;">
-    <div>
-      <strong>🛠️ Modo Administrador Activo</strong>
-      <p style="font-size: 0.85rem; color: #4A5568;">Puedes agregar nuevos productos o modificar el catálogo.</p>
-    </div>
-    <div class="admin-actions">
-      <button class="btn-admin-action" onclick="openAddProductModal()">+ Agregar Producto</button>
-      <button class="btn-admin-logout" onclick="handleLogout()">Cerrar Sesión</button>
-    </div>
-  </div>
-
-  <div class="controls-bar">
-    <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nombre, tela (drill, ignífuga), tipo..." oninput="filterProducts()">
-    <div class="categories-filter">
-      <button class="filter-chip active" onclick="setCategoryFilter('TODOS', this)">Todos</button>
-      <button class="filter-chip" onclick="setCategoryFilter('CHAQUETAS', this)">Chaquetas</button>
-      <button class="filter-chip" onclick="setCategoryFilter('OVEROLES', this)">Overoles</button>
-      <button class="filter-chip" onclick="setCategoryFilter('CAMISAS', this)">Camisas</button>
-      <button class="filter-chip" onclick="setCategoryFilter('DOTACION', this)">Dotaciones</button>
-    </div>
-  </div>
-
-  <div class="catalog-grid" id="productGridContainer">
-    <!-- El contenido inicial se cargará desde JavaScript -->
-  </div>
-
-  <!-- Modal Login -->
-  <div class="modal-overlay" id="loginModal">
-    <div class="modal-box">
-      <h2 class="modal-title">Acceso de Administrador</h2>
-      <div class="form-group">
-        <label>Correo Electrónico</label>
-        <input type="email" id="loginEmail" placeholder="admin@ejemplo.com">
-      </div>
-      <div class="form-group">
-        <label>Contraseña</label>
-        <input type="password" id="loginPassword" placeholder="••••••••">
-      </div>
-      <button class="btn-primary-modal" onclick="handleLogin()">Ingresar al Panel</button>
-      <button class="btn-close-modal" onclick="closeModal('loginModal')">Cancelar</button>
-    </div>
-  </div>
-
-  <!-- Modal Producto -->
-  <div class="modal-overlay" id="productFormModal">
-    <div class="modal-box">
-      <h2 class="modal-title" id="productModalHeading">Agregar Nuevo Producto</h2>
-      <input type="hidden" id="editDocId">
-      <input type="hidden" id="existingImgUrl">
-
-      <div class="form-group">
-        <label>Nombre de la Prenda o Producto</label>
-        <input type="text" id="inputProdName" placeholder="Ej: Camisa Drill Manga Larga Especializada">
-      </div>
-
-      <div class="form-group">
-        <label>Foto de la Prenda</label>
-        <input type="file" id="inputProdImage" accept="image/*">
-      </div>
-
-      <div class="form-group">
-        <label>Precio / Cotización ($)</label>
-        <input type="text" id="inputProdPrice" placeholder="Ej: Según Cotización">
-      </div>
-
-      <div class="form-group">
-        <label>Descripción y Especificaciones Técnicas</label>
-        <textarea id="inputProdDesc" rows="4" placeholder="Especificaciones de la prenda..."></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Etiquetas (Separadas por comas)</label>
-        <input type="text" id="inputProdTags" placeholder="Camisas, Drill, Dotacion">
-      </div>
-
-      <button class="btn-primary-modal" id="saveProductBtn" onclick="handleSaveProduct()">Guardar en Catálogo</button>
-      <button class="btn-close-modal" onclick="closeModal('productFormModal')">Cancelar</button>
-    </div>
-  </div>
-
-  <footer>
-    <p>&copy; Reyand Clothing / InduPro. Confección y Personalización de Prendas Industriales.</p>
-  </footer>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyB54k-MuLoqtkI7CSVt1UsHvPt5XY_rI5s",
-      authDomain: "reyand-indupro.firebaseapp.com",
-      projectId: "reyand-indupro",
-      storageBucket: "reyand-indupro.firebasestorage.app",
-      messagingSenderId: "927807451159",
-      appId: "1:927807451159:web:e9a599ecfab290abe16c52",
-      measurementId: "G-6FBN8NPH6X"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // PRODUCTOS INICIALES RESTAURADOS (Para que la página NO vuelva a quedar en blanco)
-    const initialProducts = [
-      {
-        id: "init_1",
-        nombre: "Camisa Drill Industrial Tipo Ingeniero",
-        precio: "Según Cotización",
-        descripcion: "Confeccionada en tela Drill de alta durabilidad. Opción de cintas reflectivas, bordado de logo corporativo y parches de tipo de sangre (RH).",
-        tags: ["Camisas", "Drill", "Dotacion"],
-        imageUrl: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&auto=format&fit=crop"
-      },
-      {
-        id: "init_2",
-        nombre: "Chaqueta Térmica e Impermeable Industrial",
-        precio: "Según Cotización",
-        descripcion: "Chaqueta de protección contra la intemperie, forro térmico interno, múltiples bolsillos de seguridad y cinta reflectiva de alta visibilidad.",
-        tags: ["Chaquetas", "Dotacion", "Reflectiva"],
-        imageUrl: "https://images.unsplash.com/photo-1544441893-675973e31985?w=600&auto=format&fit=crop"
-      },
-      {
-        id: "init_3",
-        nombre: "Overol de Trabajo Overol Drill / Ignífugo",
-        precio: "Según Cotización",
-        descripcion: "Overol entero con cremallera reforzada de doble carro, fuelle en espalda para libertad de movimiento. Disponible en material ignífugo o drill.",
-        tags: ["Overoles", "Ignifuga", "Drill"],
-        imageUrl: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=600&auto=format&fit=crop"
-      }
-    ];
-
-    let allProducts = [...initialProducts];
-    let activeCategory = 'TODOS';
-    let isAdminLoggedIn = false;
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        isAdminLoggedIn = true;
-        document.getElementById('adminPanelBanner').style.display = 'flex';
-        document.getElementById('loginTriggerBtn').innerText = '🔓 Sesión Activa';
-      } else {
-        isAdminLoggedIn = false;
-        document.getElementById('adminPanelBanner').style.display = 'none';
-        document.getElementById('loginTriggerBtn').innerText = '🔒 Ingreso Administrador';
-      }
-      renderCatalog();
-    });
-
-    async function loadCatalogFromDatabase() {
-      try {
-        const querySnapshot = await getDocs(collection(db, "productos"));
-        const dbProducts = [];
-        querySnapshot.forEach((docSnap) => {
-          dbProducts.push({ id: docSnap.id, ...docSnap.data() });
-        });
+        <div class="logo-box">
+            <img src="img/logo-induprojk.jpg" alt="Reyand InduPro" onerror="this.src='https://via.placeholder.com/170/0b0f14/00f0ff?text=Reyand'">
+        </div>
+        <h1>Reyand InduPro</h1>
+        <p>Prendas Industriales y Dotaciones 100% Personalizables sobre Pedido</p>
         
-        // Unimos los productos base con los nuevos guardados en Firebase
-        if (dbProducts.length > 0) {
-          allProducts = [...dbProducts, ...initialProducts];
+        <div class="redes-header">
+            <a href="https://www.facebook.com/profile.php?id=100069582463062" target="_blank" class="fb" title="Facebook Oficial"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/induprojk?igsi=M2ZsZHFkYXd2aXdv" target="_blank" class="ig" title="Instagram Oficial"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@induprojk?_r=1&_t=ZS-99O53Yk5MWt" target="_blank" class="tk" title="TikTok Oficial"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+    </header>
+
+    <nav>
+        <button class="nav-btn activo" onclick="cambiarPestaña('inicio', this)">Inicio</button>
+        <button class="nav-btn" onclick="cambiarPestaña('catalogo', this)">Ver Catálogo</button>
+        <button class="nav-btn" onclick="cambiarPestaña('bordados', this)">Bordados</button>
+        <button class="nav-btn" onclick="cambiarPestaña('pagos', this)">Medios de Pago</button>
+    </nav>
+
+    <div class="banner-destacado">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <div class="banner-destacado-texto">
+            <h4>¡Prendas 100% Personalizadas!</h4>
+            <p>Confeccionamos según las necesidades de tu empresa: elige <strong>colores, combinaciones de diseño, logotipos bordados y bolsillos</strong>.</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- PANEL DE CONTROL DEL MODERADOR (SUBIR FOTOS DESDE CELULAR) -->
+        <div class="caja-panel-gestion">
+            <h3>
+                <span><i class="fa-solid fa-mobile-screen-button"></i> Crear Prenda o Subir Foto desde Celular</span>
+                <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Salir</button>
+            </h3>
+            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Puedes adjuntar una foto tomada con tu celular o elegirla desde tu galería para agregar prendas nuevas.</p>
+            
+            <form id="form-agregar-producto" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                <input type="text" id="add-nombre" placeholder="Nombre de la línea/prenda" class="campo-input" required style="margin: 0;">
+                <input type="text" id="add-precio" placeholder="Precio (Ej: $85.000)" class="campo-input" required style="margin: 0;">
+                
+                <!-- SELECCIÓN DE FOTO DESDE CELULAR -->
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: var(--neon-azul);">Seleccionar Foto de la Galería:</label>
+                    <input type="file" id="add-archivo-foto" accept="image/*" class="campo-input" style="margin: 0; padding: 8px;">
+                </div>
+
+                <select id="add-estado" class="campo-input" style="margin: 0; background: #040609;">
+                    <option value="normal">Estado: Normal</option>
+                    <option value="nuevo">Nuevo Producto</option>
+                    <option value="promo">En Promoción</option>
+                    <option value="agotado">Agotado</option>
+                </select>
+
+                <button type="submit" class="btn-entrar" style="background: var(--neon-azul); color: black; margin: 0; grid-column: 1 / -1;">+ Guardar Prenda en Catálogo</button>
+            </form>
+        </div>
+
+        <!-- PESTAÑA INICIO -->
+        <div id="pantalla-inicio" class="seccion-pantalla activa">
+            <div class="bienvenida-box">
+                <h2>Exhibición Oficial de Muestras y Confección</h2>
+                <p>Visualiza con total claridad los modelos reales que fabricamos en nuestro taller, calidades textiles, opciones de bordado y precios base.</p>
+                <div style="margin-top: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-galeria" style="max-width: 250px;" onclick="cambiarPestaña('catalogo', document.querySelectorAll('nav .nav-btn')[1])">
+                        <i class="fa-solid fa-folder-open"></i> Explorar Catálogo
+                    </button>
+                    <button class="btn-galeria" style="max-width: 250px; background: var(--neon-morado); color: white;" onclick="cambiarPestaña('bordados', document.querySelectorAll('nav .nav-btn')[2])">
+                        <i class="fa-solid fa-file-pen"></i> Ver Bordados
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PESTAÑA CATÁLOGO -->
+        <div id="pantalla-catalogo" class="seccion-pantalla">
+            <div id="contenedor-catalogo-dinamico" class="grid-portadas">
+                <!-- Se generan dinámicamente -->
+            </div>
+        </div>
+
+        <!-- PESTAÑA BORDADOS -->
+        <div id="pantalla-bordados" class="seccion-pantalla">
+            <div class="bienvenida-box" style="border-color: var(--neon-morado);">
+                <h2 style="color: var(--neon-morado);"><i class="fa-solid fa-file-pen"></i> Galería de Bordados Personalizados</h2>
+                <p>Personalizamos tus prendas industriales con logotipos de alta definición, nombres, cargos, banderas y tipos de sangre.</p>
+            </div>
+            <div id="contenedor-bordados-dinamico" class="grid-portadas">
+                <!-- Se genera automáticamente -->
+            </div>
+        </div>
+
+        <!-- PESTAÑA PAGOS -->
+        <div id="pantalla-pagos" class="seccion-pantalla">
+            <div style="max-width: 550px; margin: 0 auto; background: var(--bg-tarjeta); padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <h3 style="color: var(--neon-azul); margin-bottom: 20px;"><i class="fa-solid fa-wallet"></i> Información de Pago</h3>
+                <p style="color: #e2e8f0; line-height: 1.6; margin-bottom: 15px;"><strong>Abono Inicial:</strong> 50% para programar la producción en taller.</p>
+                <p style="color: #e2e8f0; line-height: 1.6;"><strong>Pago Final:</strong> 50% restante previo al despacho definitivo.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL INICIO DE SESIÓN MODERADOR -->
+    <div id="modal-login" class="modal-overlay">
+        <div class="caja-modal caja-login">
+            <h3 style="color: var(--neon-alerta); margin-bottom: 15px;"><i class="fa-solid fa-shield-halved"></i> Acceso Moderador</h3>
+            <p style="color: var(--texto-gris); font-size: 0.85rem; margin-bottom: 15px;">Ingresa tus credenciales para administrar el catálogo.</p>
+            <input type="email" id="login-email" placeholder="Correo electrónico" class="campo-input">
+            <input type="password" id="login-password" placeholder="Contraseña" class="campo-input">
+            <button class="btn-entrar" onclick="iniciarSesionModerador()">Ingresar</button>
+            <button onclick="cerrarModal('modal-login')" style="background: transparent; border: none; color: var(--texto-gris); margin-top: 15px; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL GALERÍA DE MUESTRAS ENUMERADAS -->
+    <div id="modal-galeria" class="modal-overlay">
+        <div class="caja-modal">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px;">
+                <h3 id="galeria-titulo" style="color: var(--neon-azul);">Muestras de la Línea</h3>
+                <button onclick="cerrarModal('modal-galeria')" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Cerrar ✕</button>
+            </div>
+            <div id="galeria-contenido" class="galeria-grid">
+                <!-- Se cargan las fotos numeradas con mensaje específico -->
+            </div>
+        </div>
+    </div>
+
+    <a href="https://api.whatsapp.com/send?phone=573184250115&text=*Hola!%20Vengo%20desde%20el%20Cat%C3%A1logo%20Digital%20de%20Reyand%20InduPro.*" target="_blank" class="btn-whatsapp-global">
+        <i class="fa-brands fa-whatsapp" style="font-size: 1.4rem;"></i> Agendar por WhatsApp
+    </a>
+
+    <footer>
+        <p>© Reyand InduPro - Confección Industrial y Dotaciones</p>
+        <p style="margin-top: 10px;">
+            Síguenos en: 
+            <a href="https://www.facebook.com/profile.php?id=100069582463062" target="_blank">Facebook</a> | 
+            <a href="https://www.instagram.com/induprojk?igsi=M2ZsZHFkYXd2aXdv" target="_blank">Instagram</a> | 
+            <a href="https://www.tiktok.com/@induprojk?_r=1&_t=ZS-99O53Yk5MWt" target="_blank">TikTok</a>
+        </p>
+    </footer>
+
+    <script>
+        // LÍNEAS CON NOMBRES DE MUESTRAS ENUMERADAS (#1 A #N)
+        const lineasCatalogo = [
+            {
+                id: 'estandar',
+                nombre: 'Camisa Estándar',
+                precio: 'Base: $85.000',
+                portada: 'img/portada-estandar-1.jpg',
+                estado: 'normal',
+                desc: 'Confección reforzada a 2 hilos con 2 broches. Calidad ideal para trabajo diario.',
+                prefijo: 'img/chaqueta-estandar-',
+                extension: '.jpg',
+                totalMuestras: 28
+            },
+            {
+                id: 'premium',
+                nombre: 'Camisa Premium',
+                precio: 'Base: $95.000',
+                portada: 'img/portada-premium-1.jpg',
+                estado: 'normal',
+                desc: 'Confección reforzada a 3 hilos con 3 broches. Acabados de alta durabilidad.',
+                prefijo: 'img/chaqueta-premium-',
+                extension: '.jpg',
+                totalMuestras: 42
+            },
+            {
+                id: 'exclusiva',
+                nombre: 'PRO Exclusivas',
+                precio: 'A Convenir',
+                portada: 'img/portada-exclusiva-1.jpg',
+                estado: 'nuevo',
+                desc: 'Diseños de gran formato con cortes combinados únicos.',
+                prefijo: 'img/chaqueta-exclusiva-',
+                extension: '.jpg',
+                totalMuestras: 14
+            },
+            {
+                id: 'dama',
+                nombre: 'Premium Dama',
+                precio: '$95.000',
+                portada: 'img/portada-dama-1.jpg',
+                estado: 'normal',
+                desc: 'Confección con horma femenina estilizada y detalles entallados.',
+                prefijo: 'img/chaqueta-dama-',
+                extension: '.jpg',
+                totalMuestras: 10
+            },
+            {
+                id: 'capuchon-drill',
+                nombre: 'Capuchón de Drill',
+                precio: 'Unidad: $16.000',
+                portada: 'img/portada-capuchon-drill.jpg',
+                estado: 'normal',
+                desc: 'Protección industrial superior en tela Drill resistente.',
+                prefijo: 'img/capuchon-drill-',
+                extension: '.jpg',
+                totalMuestras: 26
+            },
+            {
+                id: 'capuchon-dracon',
+                nombre: 'Capuchón de Dacrón',
+                precio: 'Unidad: $12.000',
+                portada: 'img/portada-capuchon-dracon.jpg',
+                estado: 'normal',
+                desc: 'Diseño fresco, ligero y de fácil lavado para largas jornadas.',
+                prefijo: 'img/capuchon-dracon-',
+                extension: '.jpg',
+                totalMuestras: 46
+            }
+        ];
+
+        const lineaBordados = {
+            id: 'bordados',
+            nombre: 'Muestra de Bordado',
+            precio: 'Personalizado',
+            portada: 'img/portada-bordados-1.jpg',
+            estado: 'normal',
+            desc: 'Bordados de alta precisión para logos corporativos, nombres, cargos y banderas.',
+            prefijo: 'img/bordados-',
+            extension: '.jpg',
+            totalMuestras: 20
+        };
+
+        function cambiarPestaña(pantallaId, boton) {
+            document.querySelectorAll('.seccion-pantalla').forEach(s => s.classList.remove('activa'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
+            document.getElementById(`pantalla-${pantallaId}`).classList.add('activa');
+            if(boton) boton.classList.add('activo');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
-        renderCatalog();
-      } catch (error) {
-        console.log("Cargando catálogo base...");
-        renderCatalog();
-      }
-    }
 
-    function compressAndConvertImage(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxDimension = 800;
-            let width = img.width;
-            let height = img.height;
+        function renderizarCatalogo() {
+            const contenedor = document.getElementById('contenedor-catalogo-dinamico');
+            contenedor.innerHTML = "";
 
-            if (width > height) {
-              if (width > maxDimension) { height *= maxDimension / width; width = maxDimension; }
-            } else {
-              if (height > maxDimension) { width *= maxDimension / height; height = maxDimension; }
+            lineasCatalogo.forEach(p => {
+                let badgeEstado = "";
+                if(p.estado === 'promo') badgeEstado = `<span class="badge-estado promo">En Promo</span>`;
+                if(p.estado === 'agotado') badgeEstado = `<span class="badge-estado agotado">Agotado</span>`;
+                if(p.estado === 'nuevo') badgeEstado = `<span class="badge-estado nuevo">Nuevo</span>`;
+
+                contenedor.innerHTML += `
+                    <div class="tarjeta-portada">
+                        ${badgeEstado}
+                        <div class="img-portada-contenedor">
+                            <span class="badge-precio">${p.precio}</span>
+                            <img src="${p.portada}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/300x300/0b0f14/00f0ff?text=${encodeURIComponent(p.nombre)}'">
+                        </div>
+                        <div class="info-portada">
+                            <h3>${p.nombre}</h3>
+                            <p>${p.desc}</p>
+                            <button class="btn-galeria" onclick="abrirGaleria('${p.id}')">
+                                <i class="fa-solid fa-images"></i> Ver Muestras (${p.totalMuestras})
+                            </button>
+                        </div>
+                        <div class="panel-acciones-item">
+                            <button class="btn-mod estado" onclick="cambiarEstadoPrenda('${p.id}', '${p.estado}')">Estado: ${p.estado}</button>
+                            <button class="btn-mod eliminar" onclick="eliminarPrenda('${p.id}')"><i class="fa-solid fa-trash"></i> Borrar</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Tarjeta de Bordados
+            const contenedorBordados = document.getElementById('contenedor-bordados-dinamico');
+            contenedorBordados.innerHTML = `
+                <div class="tarjeta-portada" style="max-width: 400px; margin: 0 auto;">
+                    <div class="img-portada-contenedor">
+                        <span class="badge-precio">${lineaBordados.precio}</span>
+                        <img src="${lineaBordados.portada}" alt="${lineaBordados.nombre}" onerror="this.src='https://via.placeholder.com/300x300/0b0f14/bf55ec?text=Bordados'">
+                    </div>
+                    <div class="info-portada">
+                        <h3>${lineaBordados.nombre}</h3>
+                        <p>${lineaBordados.desc}</p>
+                        <button class="btn-galeria" style="background: var(--neon-morado); color: white;" onclick="abrirGaleria('bordados')">
+                            <i class="fa-solid fa-images"></i> Ver Galería de Bordados (${lineaBordados.totalMuestras})
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // MOSTRAR GALERÍA CON MUESTRAS ENUMERADAS (#1, #2, #3...) Y MENSAJE DE WHATSAPP PERSONALIZADO
+        function abrirGaleria(idLinea) {
+            let linea = lineasCatalogo.find(l => l.id === idLinea);
+            if(!linea && idLinea === 'bordados') linea = lineaBordados;
+            if(!linea) return;
+
+            document.getElementById('galeria-titulo').innerText = `Muestras: ${linea.nombre}`;
+            const contenedorModal = document.getElementById('galeria-contenido');
+            contenedorModal.innerHTML = "";
+
+            for(let i = 1; i <= linea.totalMuestras; i++) {
+                const rutaFoto = `${linea.prefijo}${i}${linea.extension}`;
+                // MENSAJE DINÁMICO EXACTO: Ejemplo "Capuchón de Drill #2" o "Camisa Premium #6"
+                const textowhatsapp = `*Hola Reyand InduPro!* Me interesa cotizar esta muestra: *${linea.nombre} #${i}*`;
+                const mensajeWa = encodeURIComponent(textowhatsapp);
+                
+                contenedorModal.innerHTML += `
+                    <div class="galeria-item">
+                        <span class="numero-muestra-tag">#${i}</span>
+                        <img src="${rutaFoto}" alt="${linea.nombre} #${i}" onerror="this.src='https://via.placeholder.com/200x200/0b0f14/00f0ff?text=${encodeURIComponent(linea.nombre)}+%23${i}'">
+                        <a href="https://api.whatsapp.com/send?phone=573184250115&text=${mensajeWa}" target="_blank" class="btn-cotizar-muestra">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar #${i}
+                        </a>
+                    </div>
+                `;
             }
 
-            canvas.width = width; canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', 0.75));
-          };
-        };
-      });
-    }
-
-    window.renderCatalog = () => {
-      const container = document.getElementById('productGridContainer');
-      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-      
-      const filtered = allProducts.filter(item => {
-        const nameMatch = (item.nombre || '').toLowerCase().includes(searchQuery);
-        const descMatch = (item.descripcion || '').toLowerCase().includes(searchQuery);
-        const tagsMatch = (item.tags || []).some(t => t.toLowerCase().includes(searchQuery));
-        
-        const categoryMatch = activeCategory === 'TODOS' || 
-          (item.tags || []).some(t => t.toUpperCase().includes(activeCategory)) ||
-          (item.nombre || '').toUpperCase().includes(activeCategory);
-
-        return (nameMatch || descMatch || tagsMatch) && categoryMatch;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">No se encontraron prendas que coincidan.</p>';
-        return;
-      }
-
-      container.innerHTML = filtered.map(item => {
-        const tagsArr = Array.isArray(item.tags) ? item.tags : (item.tags ? item.tags.split(',') : []);
-        const tagsHTML = tagsArr.map(t => `<span class="tag-badge">${t.trim()}</span>`).join('');
-        const whatsappMsg = encodeURIComponent(`Hola Reyand Clothing / InduPro, quisiera cotizar la prenda: ${item.nombre}`);
-
-        return `
-          <div class="product-card">
-            <div class="card-img-wrapper">
-              <img src="${item.imageUrl || 'https://via.placeholder.com/400x300?text=Sin+Foto'}" alt="${item.nombre}">
-            </div>
-            <div class="card-content">
-              <h3 class="product-title">${item.nombre}</h3>
-              <div class="product-price">${item.precio || 'Consultar Precio'}</div>
-              <p class="product-description">${item.descripcion || ''}</p>
-              <div class="tags-container">${tagsHTML}</div>
-              <a href="https://wa.me/?text=${whatsappMsg}" class="ws-quote-btn" target="_blank">📱 Cotizar por WhatsApp</a>
-            </div>
-            ${isAdminLoggedIn ? `
-              <div class="card-admin-controls">
-                <button class="btn-edit-item" onclick="openEditProductModal('${item.id}')">✏️ Editar</button>
-                <button class="btn-delete-item" onclick="handleDeleteProduct('${item.id}')">🗑️ Eliminar</button>
-              </div>
-            ` : ''}
-          </div>
-        `;
-      }).join('');
-    };
-
-    window.setCategoryFilter = (cat, buttonEl) => {
-      activeCategory = cat;
-      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-      buttonEl.classList.add('active');
-      renderCatalog();
-    };
-
-    window.filterProducts = () => renderCatalog();
-
-    window.handleLogin = async () => {
-      const email = document.getElementById('loginEmail').value;
-      const pass = document.getElementById('loginPassword').value;
-      if(!email || !pass) { alert("Ingresa tu correo y contraseña"); return; }
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        closeModal('loginModal');
-      } catch (err) { alert("Error de ingreso: " + err.message); }
-    };
-
-    window.handleLogout = () => signOut(auth);
-
-    window.handleSaveProduct = async () => {
-      const docId = document.getElementById('editDocId').value;
-      const nombre = document.getElementById('inputProdName').value;
-      const precio = document.getElementById('inputProdPrice').value;
-      const descripcion = document.getElementById('inputProdDesc').value;
-      const tagsRaw = document.getElementById('inputProdTags').value;
-      const fileInput = document.getElementById('inputProdImage');
-      const existingImgUrl = document.getElementById('existingImgUrl').value;
-
-      if (!nombre) { alert("Por favor ingresa el nombre de la prenda"); return; }
-
-      const saveBtn = document.getElementById('saveProductBtn');
-      saveBtn.innerText = "Guardando...";
-      saveBtn.disabled = true;
-
-      let finalImageUrl = existingImgUrl || 'https://via.placeholder.com/400x300?text=Sin+Foto';
-      if (fileInput.files.length > 0) {
-        finalImageUrl = await compressAndConvertImage(fileInput.files[0]);
-      }
-
-      const tagsArray = tagsRaw ? tagsRaw.split(',').map(t => t.trim()) : [];
-
-      try {
-        if (docId && !docId.startsWith('init_')) {
-          await updateDoc(doc(db, "productos", docId), {
-            nombre, precio, descripcion, tags: tagsArray, imageUrl: finalImageUrl, fechaActualizacion: new Date()
-          });
-        } else {
-          await addDoc(collection(db, "productos"), {
-            nombre, precio, descripcion, tags: tagsArray, imageUrl: finalImageUrl, fechaCreacion: new Date()
-          });
+            document.getElementById('modal-galeria').style.display = "flex";
         }
 
-        saveBtn.innerText = "Guardar en Catálogo";
-        saveBtn.disabled = false;
-        closeModal('productFormModal');
-        await loadCatalogFromDatabase();
-      } catch (error) {
-        alert("Error al guardar: " + error.message);
-        saveBtn.innerText = "Guardar en Catálogo";
-        saveBtn.disabled = false;
-      }
-    };
+        function abrirModalLogin() { document.getElementById('modal-login').style.display = "flex"; }
+        function cerrarModal(modalId) { document.getElementById(modalId).style.display = "none"; }
 
-    window.openAddProductModal = () => {
-      document.getElementById('productModalHeading').innerText = 'Agregar Nuevo Producto';
-      document.getElementById('editDocId').value = '';
-      document.getElementById('existingImgUrl').value = '';
-      document.getElementById('inputProdName').value = '';
-      document.getElementById('inputProdPrice').value = '';
-      document.getElementById('inputProdDesc').value = '';
-      document.getElementById('inputProdTags').value = '';
-      document.getElementById('inputProdImage').value = '';
-      openModal('productFormModal');
-    };
+        async function iniciarSesionModerador() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                await window.firebaseFunctions.signInWithEmailAndPassword(window.auth, email, password);
+                alert("¡Modo Moderador Activo!");
+                cerrarModal('modal-login');
+            } catch (error) {
+                alert("Credenciales incorrectas.");
+            }
+        }
 
-    window.openEditProductModal = (id) => {
-      const item = allProducts.find(p => p.id === id);
-      if (!item) return;
+        async function cerrarSesionModerador() {
+            await window.firebaseFunctions.signOut(window.auth);
+            alert("Sesión cerrada.");
+        }
 
-      document.getElementById('productModalHeading').innerText = 'Editar Prenda';
-      document.getElementById('editDocId').value = item.id;
-      document.getElementById('existingImgUrl').value = item.imageUrl || '';
-      document.getElementById('inputProdName').value = item.nombre || '';
-      document.getElementById('inputProdPrice').value = item.precio || '';
-      document.getElementById('inputProdDesc').value = item.descripcion || '';
-      document.getElementById('inputProdTags').value = Array.isArray(item.tags) ? item.tags.join(', ') : (item.tags || '');
-      document.getElementById('inputProdImage').value = '';
-      openModal('productFormModal');
-    };
+        window.addEventListener('DOMContentLoaded', () => {
+            renderizarCatalogo();
 
-    window.handleDeleteProduct = async (id) => {
-      if (confirm("¿Estás segura de eliminar esta prenda?")) {
-        try {
-          if (!id.startsWith('init_')) {
-            await deleteDoc(doc(db, "productos", id));
-          }
-          allProducts = allProducts.filter(p => p.id !== id);
-          renderCatalog();
-        } catch (err) { alert("Error al eliminar: " + err.message); }
-      }
-    };
+            setTimeout(() => {
+                if(window.auth) {
+                    window.firebaseFunctions.onAuthStateChanged(window.auth, (user) => {
+                        const candado = document.getElementById('icono-candado');
+                        if (user) {
+                            document.body.classList.add('modo-moderador-activo');
+                            candado.className = "fa-solid fa-lock-open";
+                        } else {
+                            document.body.classList.remove('modo-moderador-activo');
+                            candado.className = "fa-solid fa-lock";
+                        }
+                    });
+                }
+            }, 1000);
+        });
 
-    window.openModal = (id) => document.getElementById(id).style.display = 'flex';
-    window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+        // FORMULARIO PARA CREAR Y SUBIR ARCHIVOS DESDE GALERÍA DEL CELULAR
+        document.getElementById('form-agregar-producto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const archivoInput = document.getElementById('add-archivo-foto');
+            let rutaImagenFinal = "img/portada-estandar-1.jpg";
 
-    loadCatalogFromDatabase();
-  </script>
+            // Si seleccionas una foto desde la galería de tu celular
+            if(archivoInput.files.length > 0) {
+                const file = archivoInput.files[0];
+                const storageRef = window.firebaseFunctions.ref(window.storage, 'catalogo/' + Date.now() + '_' + file.name);
+                try {
+                    const snapshot = await window.firebaseFunctions.uploadBytes(storageRef, file);
+                    rutaImagenFinal = await window.firebaseFunctions.getDownloadURL(snapshot.ref);
+                } catch(err) {
+                    console.log("Error al subir archivo, usando imagen predeterminada");
+                }
+            }
+
+            const nuevaPrenda = {
+                id: Date.now().toString(),
+                nombre: document.getElementById('add-nombre').value,
+                precio: document.getElementById('add-precio').value,
+                portada: rutaImagenFinal,
+                estado: document.getElementById('add-estado').value,
+                desc: 'Prenda agregada desde dispositivo moderador.',
+                prefijo: 'img/',
+                extension: '.jpg',
+                totalMuestras: 1
+            };
+
+            lineasCatalogo.unshift(nuevaPrenda);
+            renderizarCatalogo();
+            alert("¡Prenda o foto guardada con éxito!");
+            e.target.reset();
+        });
+
+        function eliminarPrenda(id) {
+            if(confirm("¿Deseas quitar esta prenda del catálogo?")) {
+                const idx = lineasCatalogo.findIndex(l => l.id === id);
+                if(idx !== -1) {
+                    lineasCatalogo.splice(idx, 1);
+                    renderizarCatalogo();
+                }
+            }
+        }
+
+        function cambiarEstadoPrenda(id, estadoActual) {
+            const estados = ['normal', 'nuevo', 'promo', 'agotado'];
+            const sig = estados[(estados.indexOf(estadoActual) + 1) % estados.length];
+            const prenda = lineasCatalogo.find(l => l.id === id);
+            if(prenda) {
+                prenda.estado = sig;
+                renderizarCatalogo();
+            }
+        }
+    </script>
 </body>
 </html>
