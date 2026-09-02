@@ -6,11 +6,12 @@
     <title>Reyand InduPro | Catálogo Industrial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- SDKs de Firebase v9 -->
+    <!-- SDKs de Firebase v9 (Auth, Firestore y Storage) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB54k-MuLoqtkI7CSVt1UsHvPt5XY_rI5s",
@@ -25,7 +26,12 @@
         const app = initializeApp(firebaseConfig);
         window.auth = getAuth(app);
         window.db = getFirestore(app);
-        window.firebaseFunctions = { signInWithEmailAndPassword, signOut, onAuthStateChanged, collection, addDoc, getDocs, deleteDoc, doc, updateDoc };
+        window.storage = getStorage(app);
+        window.firebaseFunctions = { 
+            signInWithEmailAndPassword, signOut, onAuthStateChanged, 
+            collection, addDoc, getDocs, deleteDoc, doc, updateDoc,
+            ref, uploadBytes, getDownloadURL 
+        };
     </script>
 
     <style>
@@ -36,9 +42,7 @@
             --neon-morado: #bf55ec;
             --neon-rosado: #ff64b4;
             --neon-verde: #25D366;
-            --neon-lima: #a6ff00;
             --neon-alerta: #ffaa00;
-            --neon-dorado: #ffd700;
             --texto-blanco: #ffffff;
             --texto-gris: #8b949e;
             --rojo-eliminar: #ff3344;
@@ -47,14 +51,34 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-principal); color: var(--texto-blanco); }
 
-        /* ENCABEZADO Y REDES SOCIALES */
+        /* ENCABEZADO */
         header {
-            text-align: center; padding: 30px 20px 20px 20px;
+            text-align: center; padding: 35px 20px 20px 20px;
             background: linear-gradient(180deg, #020406 0%, #040609 100%);
             position: relative;
         }
-        .logo-box img { max-width: 110px; border-radius: 50%; box-shadow: 0 0 20px var(--neon-azul); margin-bottom: 12px; }
-        header h1 { font-size: 2.2rem; letter-spacing: 1px; color: white; }
+
+        /* CANDADO DISCRETO MODERADOR (AUMENTADO Y DISCRETO ARRIBA A LA DERECHA) */
+        .btn-candado-moderador {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.05); color: var(--texto-gris);
+            width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-candado-moderador:hover { color: var(--neon-alerta); border-color: var(--neon-alerta); box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
+        .modo-moderador-activo .btn-candado-moderador { color: var(--neon-verde); border-color: var(--neon-verde); box-shadow: 0 0 12px var(--neon-verde); }
+
+        /* LOGO MÁS GRANDE */
+        .logo-box img { 
+            max-width: 170px; /* Tamaño más grande para mayor visibilidad */
+            width: 100%; height: auto;
+            border-radius: 50%; box-shadow: 0 0 25px var(--neon-azul); margin-bottom: 15px; 
+            transition: transform 0.3s ease;
+        }
+        .logo-box img:hover { transform: scale(1.04); }
+
+        header h1 { font-size: 2.3rem; letter-spacing: 1px; color: white; }
         header p { color: var(--texto-gris); font-size: 0.95rem; margin-top: 6px; }
 
         .redes-header { display: flex; justify-content: center; gap: 18px; margin-top: 15px; }
@@ -68,7 +92,7 @@
         .redes-header a.ig:hover { color: #e1306c; border-color: #e1306c; box-shadow: 0 0 12px rgba(225,48,108,0.4); }
         .redes-header a.tk:hover { color: #00f2fe; border-color: #00f2fe; box-shadow: 0 0 12px rgba(0,242,254,0.4); }
 
-        /* MENÚ DE NAVEGACIÓN */
+        /* NAVEGACIÓN */
         nav {
             display: flex; justify-content: center; background: #020406;
             border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 100; flex-wrap: wrap;
@@ -80,9 +104,8 @@
         }
         .nav-btn:hover { color: white; }
         .nav-btn.activo { color: var(--neon-azul); border-bottom-color: var(--neon-azul); }
-        .nav-btn.btn-admin-nav { color: var(--neon-alerta); }
 
-        /* BANNER DESTACADO */
+        /* BANNER */
         .banner-destacado {
             background: linear-gradient(90deg, rgba(11, 15, 20, 0.95) 0%, rgba(2, 4, 6, 0.95) 100%);
             border: 2px dashed var(--neon-alerta); border-left: 6px solid var(--neon-alerta);
@@ -94,13 +117,12 @@
         .banner-destacado-texto p { color: #e2e8f0; font-size: 0.95rem; line-height: 1.5; }
         .banner-destacado-texto strong { color: var(--neon-azul); }
 
-        /* CONTENEDOR PRINCIPAL */
+        /* CONTENEDOR */
         .container { max-width: 1200px; margin: 20px auto 40px auto; padding: 0 20px; padding-bottom: 60px; }
         .seccion-pantalla { display: none; }
         .seccion-pantalla.activa { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* PESTAÑA INICIO */
         .bienvenida-box {
             background: var(--bg-tarjeta); border: 1px solid rgba(0, 240, 255, 0.1);
             border-radius: 14px; padding: 35px; text-align: center; margin-bottom: 35px;
@@ -108,7 +130,7 @@
         .bienvenida-box h2 { font-size: 1.8rem; color: var(--neon-azul); margin-bottom: 15px; }
         .bienvenida-box p { color: #e2e8f0; line-height: 1.7; font-size: 1.05rem; max-width: 850px; margin: 0 auto 25px auto; }
 
-        /* CUADRÍCULA DEL CATÁLOGO */
+        /* CATÁLOGO */
         .grid-portadas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
         .tarjeta-portada {
             background: var(--bg-tarjeta); border-radius: 14px; overflow: hidden;
@@ -119,7 +141,6 @@
         .img-portada-contenedor { width: 100%; height: 300px; background: #070a0e; position: relative; display: flex; justify-content: center; align-items: center; padding: 15px; }
         .img-portada-contenedor img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
         
-        /* ETIQUETAS DE ESTADO */
         .badge-estado {
             position: absolute; top: 12px; left: 12px; padding: 5px 10px; border-radius: 4px;
             font-size: 0.75rem; font-weight: bold; text-transform: uppercase; z-index: 10;
@@ -145,7 +166,7 @@
         }
         .btn-galeria:hover { background: white; box-shadow: 0 0 12px white; }
 
-        /* BOTONES EXCLUSIVOS DE MODERADOR */
+        /* HERRAMIENTAS DE MODERADOR */
         .panel-acciones-item {
             display: none; background: #160305; border-top: 1px solid var(--rojo-eliminar);
             padding: 10px; gap: 8px; justify-content: space-between;
@@ -155,7 +176,7 @@
         .btn-mod.eliminar { background: var(--rojo-eliminar); color: white; }
         .btn-mod.estado { background: var(--neon-alerta); color: black; }
 
-        /* MODALES (LOGIN Y GALERÍA) */
+        /* MODALES */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); z-index: 300; justify-content: center; align-items: center; padding: 20px;
@@ -168,17 +189,25 @@
         .campo-input { width: 100%; padding: 12px; background: #040609; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; margin-bottom: 15px; font-size: 0.95rem; }
         .btn-entrar { background: var(--neon-alerta); color: black; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; }
 
-        /* GALERÍA EN MODAL */
+        /* GALERÍA EN MODAL CON NÚMERO DE MUESTRA */
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
         .galeria-item { background: #040609; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; }
         .galeria-item img { width: 100%; height: 220px; object-fit: contain; padding: 10px; background: #070a0e; }
-        .btn-cotizar-muestra {
-            background: var(--neon-verde); color: white; border: none; width: 100%; padding: 8px;
-            font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: none; display: flex;
-            align-items: center; justify-content: center; gap: 5px;
+        
+        /* ETIQUETA CON EL NÚMERO DE PRODUCTO (#1, #2, #3) */
+        .numero-muestra-tag {
+            position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.85);
+            color: var(--neon-azul); border: 1px solid var(--neon-azul); font-weight: bold;
+            font-size: 0.8rem; padding: 3px 8px; border-radius: 4px; z-index: 5;
         }
 
-        /* PANEL DE GESTIÓN DE MODERADOR */
+        .btn-cotizar-muestra {
+            background: var(--neon-verde); color: white; border: none; width: 100%; padding: 10px;
+            font-size: 0.85rem; font-weight: bold; cursor: pointer; text-decoration: none; display: flex;
+            align-items: center; justify-content: center; gap: 6px;
+        }
+
+        /* PANEL DE CREACIÓN DESDE EL CELULAR */
         .caja-panel-gestion {
             background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px;
             padding: 25px; margin-bottom: 30px; display: none;
@@ -201,8 +230,13 @@
 <body>
 
     <header>
+        <!-- BOTÓN CANDADO DISCRETO MODERADOR -->
+        <button class="btn-candado-moderador" onclick="abrirModalLogin()" title="Acceso Moderador">
+            <i class="fa-solid fa-lock" id="icono-candado"></i>
+        </button>
+
         <div class="logo-box">
-            <img src="img/logo-induprojk.jpg" alt="Reyand InduPro" onerror="this.src='https://via.placeholder.com/110/0b0f14/00f0ff?text=Reyand'">
+            <img src="img/logo-induprojk.jpg" alt="Reyand InduPro" onerror="this.src='https://via.placeholder.com/170/0b0f14/00f0ff?text=Reyand'">
         </div>
         <h1>Reyand InduPro</h1>
         <p>Prendas Industriales y Dotaciones 100% Personalizables sobre Pedido</p>
@@ -219,7 +253,6 @@
         <button class="nav-btn" onclick="cambiarPestaña('catalogo', this)">Ver Catálogo</button>
         <button class="nav-btn" onclick="cambiarPestaña('bordados', this)">Bordados</button>
         <button class="nav-btn" onclick="cambiarPestaña('pagos', this)">Medios de Pago</button>
-        <button class="nav-btn btn-admin-nav" id="btn-estado-sesion" onclick="abrirModalLogin()"><i class="fa-solid fa-lock"></i> Modo Moderador</button>
     </nav>
 
     <div class="banner-destacado">
@@ -232,26 +265,32 @@
 
     <div class="container">
 
-        <!-- PANEL DE CONTROL DEL MODERADOR -->
+        <!-- PANEL DE CONTROL DEL MODERADOR (SUBIR FOTOS DESDE CELULAR) -->
         <div class="caja-panel-gestion">
             <h3>
-                <span><i class="fa-solid fa-user-gear"></i> Panel de Moderador Activo</span>
-                <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Cerrar Sesión</button>
+                <span><i class="fa-solid fa-mobile-screen-button"></i> Crear Prenda o Subir Foto desde Celular</span>
+                <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Salir</button>
             </h3>
-            <p style="font-size: 0.9rem; color: var(--texto-gris); margin-bottom: 15px;">Añade prendas nuevas o modifica los estados del catálogo en tiempo real.</p>
+            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Puedes adjuntar una foto tomada con tu celular o elegirla desde tu galería para agregar prendas nuevas.</p>
             
             <form id="form-agregar-producto" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                <input type="text" id="add-nombre" placeholder="Nombre de la prenda/muestra" class="campo-input" required style="margin: 0;">
-                <input type="text" id="add-categoria" placeholder="Categoría (Ej: Chalecos, Premium)" class="campo-input" required style="margin: 0;">
-                <input type="text" id="add-precio" placeholder="Precio o Base (Ej: $85.000)" class="campo-input" required style="margin: 0;">
-                <input type="text" id="add-imagen" placeholder="Ruta de Foto (Ej: img/foto-1.jpg)" class="campo-input" required style="margin: 0;">
+                <input type="text" id="add-nombre" placeholder="Nombre de la línea/prenda" class="campo-input" required style="margin: 0;">
+                <input type="text" id="add-precio" placeholder="Precio (Ej: $85.000)" class="campo-input" required style="margin: 0;">
+                
+                <!-- SELECCIÓN DE FOTO DESDE CELULAR -->
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: var(--neon-azul);">Seleccionar Foto de la Galería:</label>
+                    <input type="file" id="add-archivo-foto" accept="image/*" class="campo-input" style="margin: 0; padding: 8px;">
+                </div>
+
                 <select id="add-estado" class="campo-input" style="margin: 0; background: #040609;">
                     <option value="normal">Estado: Normal</option>
                     <option value="nuevo">Nuevo Producto</option>
                     <option value="promo">En Promoción</option>
                     <option value="agotado">Agotado</option>
                 </select>
-                <button type="submit" class="btn-entrar" style="background: var(--neon-azul); color: black; margin: 0;">+ Guardar Prenda</button>
+
+                <button type="submit" class="btn-entrar" style="background: var(--neon-azul); color: black; margin: 0; grid-column: 1 / -1;">+ Guardar Prenda en Catálogo</button>
             </form>
         </div>
 
@@ -278,7 +317,7 @@
             </div>
         </div>
 
-        <!-- PESTAÑA BORDADOS (NUEVA SECCIÓN) -->
+        <!-- PESTAÑA BORDADOS -->
         <div id="pantalla-bordados" class="seccion-pantalla">
             <div class="bienvenida-box" style="border-color: var(--neon-morado);">
                 <h2 style="color: var(--neon-morado);"><i class="fa-solid fa-file-pen"></i> Galería de Bordados Personalizados</h2>
@@ -304,15 +343,15 @@
     <div id="modal-login" class="modal-overlay">
         <div class="caja-modal caja-login">
             <h3 style="color: var(--neon-alerta); margin-bottom: 15px;"><i class="fa-solid fa-shield-halved"></i> Acceso Moderador</h3>
-            <p style="color: var(--texto-gris); font-size: 0.85rem; margin-bottom: 15px;">Ingresa tus credenciales para habilitar la edición del catálogo.</p>
+            <p style="color: var(--texto-gris); font-size: 0.85rem; margin-bottom: 15px;">Ingresa tus credenciales para administrar el catálogo.</p>
             <input type="email" id="login-email" placeholder="Correo electrónico" class="campo-input">
             <input type="password" id="login-password" placeholder="Contraseña" class="campo-input">
-            <button class="btn-entrar" onclick="iniciarSesionModerador()">Ingresar al Panel</button>
+            <button class="btn-entrar" onclick="iniciarSesionModerador()">Ingresar</button>
             <button onclick="cerrarModal('modal-login')" style="background: transparent; border: none; color: var(--texto-gris); margin-top: 15px; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
         </div>
     </div>
 
-    <!-- MODAL GALERÍA DE MUESTRAS -->
+    <!-- MODAL GALERÍA DE MUESTRAS ENUMERADAS -->
     <div id="modal-galeria" class="modal-overlay">
         <div class="caja-modal">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px;">
@@ -320,7 +359,7 @@
                 <button onclick="cerrarModal('modal-galeria')" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Cerrar ✕</button>
             </div>
             <div id="galeria-contenido" class="galeria-grid">
-                <!-- Se cargan dinámicamente las fotos de la categoría -->
+                <!-- Se cargan las fotos numeradas con mensaje específico -->
             </div>
         </div>
     </div>
@@ -337,17 +376,14 @@
             <a href="https://www.instagram.com/induprojk?igsi=M2ZsZHFkYXd2aXdv" target="_blank">Instagram</a> | 
             <a href="https://www.tiktok.com/@induprojk?_r=1&_t=ZS-99O53Yk5MWt" target="_blank">TikTok</a>
         </p>
-        <p style="margin-top: 15px;">
-            <a href="#" onclick="abrirModalLogin(); return false;" style="color: var(--neon-alerta); font-size: 0.8rem;"><i class="fa-solid fa-key"></i> Acceso Moderador</a>
-        </p>
     </footer>
 
     <script>
-        // CONFIGURACIÓN DE LÍNEAS Y GALERÍAS SEGÚN TUS NOMBRES EXACTOS DE FOTOS
+        // LÍNEAS CON NOMBRES DE MUESTRAS ENUMERADAS (#1 A #N)
         const lineasCatalogo = [
             {
                 id: 'estandar',
-                nombre: 'Línea Estándar',
+                nombre: 'Camisa Estándar',
                 precio: 'Base: $85.000',
                 portada: 'img/portada-estandar-1.jpg',
                 estado: 'normal',
@@ -358,7 +394,7 @@
             },
             {
                 id: 'premium',
-                nombre: 'Línea Premium',
+                nombre: 'Camisa Premium',
                 precio: 'Base: $95.000',
                 portada: 'img/portada-premium-1.jpg',
                 estado: 'normal',
@@ -391,7 +427,7 @@
             },
             {
                 id: 'capuchon-drill',
-                nombre: 'Capuchones en Drill',
+                nombre: 'Capuchón de Drill',
                 precio: 'Unidad: $16.000',
                 portada: 'img/portada-capuchon-drill.jpg',
                 estado: 'normal',
@@ -402,7 +438,7 @@
             },
             {
                 id: 'capuchon-dracon',
-                nombre: 'Capuchones en Dacrón',
+                nombre: 'Capuchón de Dacrón',
                 precio: 'Unidad: $12.000',
                 portada: 'img/portada-capuchon-dracon.jpg',
                 estado: 'normal',
@@ -415,7 +451,7 @@
 
         const lineaBordados = {
             id: 'bordados',
-            nombre: 'Muestras de Bordados Computarizados',
+            nombre: 'Muestra de Bordado',
             precio: 'Personalizado',
             portada: 'img/portada-bordados-1.jpg',
             estado: 'normal',
@@ -465,7 +501,7 @@
                 `;
             });
 
-            // Cargar tarjeta en la pestaña Bordados
+            // Tarjeta de Bordados
             const contenedorBordados = document.getElementById('contenedor-bordados-dinamico');
             contenedorBordados.innerHTML = `
                 <div class="tarjeta-portada" style="max-width: 400px; margin: 0 auto;">
@@ -484,7 +520,7 @@
             `;
         }
 
-        // ABRIR GALERÍA CON MUESTRAS
+        // MOSTRAR GALERÍA CON MUESTRAS ENUMERADAS (#1, #2, #3...) Y MENSAJE DE WHATSAPP PERSONALIZADO
         function abrirGaleria(idLinea) {
             let linea = lineasCatalogo.find(l => l.id === idLinea);
             if(!linea && idLinea === 'bordados') linea = lineaBordados;
@@ -496,13 +532,16 @@
 
             for(let i = 1; i <= linea.totalMuestras; i++) {
                 const rutaFoto = `${linea.prefijo}${i}${linea.extension}`;
-                const mensajeWa = encodeURIComponent(`*Hola Reyand InduPro!* Me interesa cotizar esta muestra de ${linea.nombre}: ${rutaFoto}`);
+                // MENSAJE DINÁMICO EXACTO: Ejemplo "Capuchón de Drill #2" o "Camisa Premium #6"
+                const textowhatsapp = `*Hola Reyand InduPro!* Me interesa cotizar esta muestra: *${linea.nombre} #${i}*`;
+                const mensajeWa = encodeURIComponent(textowhatsapp);
                 
                 contenedorModal.innerHTML += `
                     <div class="galeria-item">
-                        <img src="${rutaFoto}" alt="Muestra ${i}" onerror="this.src='https://via.placeholder.com/200x200/0b0f14/00f0ff?text=Foto+${i}'">
+                        <span class="numero-muestra-tag">#${i}</span>
+                        <img src="${rutaFoto}" alt="${linea.nombre} #${i}" onerror="this.src='https://via.placeholder.com/200x200/0b0f14/00f0ff?text=${encodeURIComponent(linea.nombre)}+%23${i}'">
                         <a href="https://api.whatsapp.com/send?phone=573184250115&text=${mensajeWa}" target="_blank" class="btn-cotizar-muestra">
-                            <i class="fa-brands fa-whatsapp"></i> Cotizar Esta
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar #${i}
                         </a>
                     </div>
                 `;
@@ -519,16 +558,16 @@
             const password = document.getElementById('login-password').value;
             try {
                 await window.firebaseFunctions.signInWithEmailAndPassword(window.auth, email, password);
-                alert("¡Bienvenido al Panel de Moderador!");
+                alert("¡Modo Moderador Activo!");
                 cerrarModal('modal-login');
             } catch (error) {
-                alert("Error de acceso: Credenciales incorrectas.");
+                alert("Credenciales incorrectas.");
             }
         }
 
         async function cerrarSesionModerador() {
             await window.firebaseFunctions.signOut(window.auth);
-            alert("Sesión de moderador cerrada.");
+            alert("Sesión cerrada.");
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -537,40 +576,57 @@
             setTimeout(() => {
                 if(window.auth) {
                     window.firebaseFunctions.onAuthStateChanged(window.auth, (user) => {
+                        const candado = document.getElementById('icono-candado');
                         if (user) {
                             document.body.classList.add('modo-moderador-activo');
-                            document.getElementById('btn-estado-sesion').innerHTML = `<i class="fa-solid fa-user-check"></i> Panel Activo`;
+                            candado.className = "fa-solid fa-lock-open";
                         } else {
                             document.body.classList.remove('modo-moderador-activo');
-                            document.getElementById('btn-estado-sesion').innerHTML = `<i class="fa-solid fa-lock"></i> Modo Moderador`;
+                            candado.className = "fa-solid fa-lock";
                         }
                     });
                 }
             }, 1000);
         });
 
+        // FORMULARIO PARA CREAR Y SUBIR ARCHIVOS DESDE GALERÍA DEL CELULAR
         document.getElementById('form-agregar-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const archivoInput = document.getElementById('add-archivo-foto');
+            let rutaImagenFinal = "img/portada-estandar-1.jpg";
+
+            // Si seleccionas una foto desde la galería de tu celular
+            if(archivoInput.files.length > 0) {
+                const file = archivoInput.files[0];
+                const storageRef = window.firebaseFunctions.ref(window.storage, 'catalogo/' + Date.now() + '_' + file.name);
+                try {
+                    const snapshot = await window.firebaseFunctions.uploadBytes(storageRef, file);
+                    rutaImagenFinal = await window.firebaseFunctions.getDownloadURL(snapshot.ref);
+                } catch(err) {
+                    console.log("Error al subir archivo, usando imagen predeterminada");
+                }
+            }
+
             const nuevaPrenda = {
                 id: Date.now().toString(),
                 nombre: document.getElementById('add-nombre').value,
-                categoria: document.getElementById('add-categoria').value,
                 precio: document.getElementById('add-precio').value,
-                portada: document.getElementById('add-imagen').value,
+                portada: rutaImagenFinal,
                 estado: document.getElementById('add-estado').value,
-                desc: 'Prenda o muestra agregada por el moderador.',
+                desc: 'Prenda agregada desde dispositivo moderador.',
                 prefijo: 'img/',
                 extension: '.jpg',
                 totalMuestras: 1
             };
+
             lineasCatalogo.unshift(nuevaPrenda);
             renderizarCatalogo();
-            alert("¡Prenda guardada exitosamente!");
+            alert("¡Prenda o foto guardada con éxito!");
             e.target.reset();
         });
 
         function eliminarPrenda(id) {
-            if(confirm("¿Deseas eliminar esta prenda del catálogo?")) {
+            if(confirm("¿Deseas quitar esta prenda del catálogo?")) {
                 const idx = lineasCatalogo.findIndex(l => l.id === id);
                 if(idx !== -1) {
                     lineasCatalogo.splice(idx, 1);
