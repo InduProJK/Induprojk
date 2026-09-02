@@ -6,12 +6,12 @@
     <title>Reyand InduPro | Catálogo Industrial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- SDKs de Firebase v9 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-        // Configuración de tu proyecto Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyB54k-MuLoqtkI7CSVt1UsHvPt5XY_rI5s",
             authDomain: "reyand-indupro.firebaseapp.com",
@@ -57,9 +57,7 @@
         header h1 { font-size: 2.2rem; letter-spacing: 1px; color: white; }
         header p { color: var(--texto-gris); font-size: 0.95rem; margin-top: 6px; }
 
-        .redes-header {
-            display: flex; justify-content: center; gap: 18px; margin-top: 15px;
-        }
+        .redes-header { display: flex; justify-content: center; gap: 18px; margin-top: 15px; }
         .redes-header a {
             color: white; font-size: 1.3rem; width: 40px; height: 40px; border-radius: 50%;
             background: #0d131a; display: flex; align-items: center; justify-content: center;
@@ -77,7 +75,7 @@
         }
         .nav-btn {
             background: transparent; border: none; color: var(--texto-gris);
-            padding: 16px 25px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            padding: 16px 22px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
             transition: 0.3s; border-bottom: 3px solid transparent;
         }
         .nav-btn:hover { color: white; }
@@ -109,13 +107,9 @@
         }
         .bienvenida-box h2 { font-size: 1.8rem; color: var(--neon-azul); margin-bottom: 15px; }
         .bienvenida-box p { color: #e2e8f0; line-height: 1.7; font-size: 1.05rem; max-width: 850px; margin: 0 auto 25px auto; }
-        
-        .indicador-pasos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
-        .paso-card { background: #020406; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 22px; text-align: left; position: relative; }
-        .paso-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--neon-azul); }
 
         /* CUADRÍCULA DEL CATÁLOGO */
-        .grid-portadas { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 25px; }
+        .grid-portadas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
         .tarjeta-portada {
             background: var(--bg-tarjeta); border-radius: 14px; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; display: flex; flex-direction: column; position: relative;
@@ -125,7 +119,7 @@
         .img-portada-contenedor { width: 100%; height: 300px; background: #070a0e; position: relative; display: flex; justify-content: center; align-items: center; padding: 15px; }
         .img-portada-contenedor img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
         
-        /* ETIQUETAS DE ESTADO (PROMO / AGOTADO / NUEVO) */
+        /* ETIQUETAS DE ESTADO */
         .badge-estado {
             position: absolute; top: 12px; left: 12px; padding: 5px 10px; border-radius: 4px;
             font-size: 0.75rem; font-weight: bold; text-transform: uppercase; z-index: 10;
@@ -161,20 +155,30 @@
         .btn-mod.eliminar { background: var(--rojo-eliminar); color: white; }
         .btn-mod.estado { background: var(--neon-alerta); color: black; }
 
-        /* MODAL DE LOGIN / MODERADOR */
-        .modal-admin {
+        /* MODALES (LOGIN Y GALERÍA) */
+        .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); z-index: 300; justify-content: center; align-items: center; padding: 20px;
         }
-        .caja-login {
-            background: var(--bg-tarjeta); border: 1px solid var(--neon-alerta); border-radius: 12px;
-            max-width: 420px; width: 100%; padding: 30px; text-align: center; box-shadow: 0 0 25px rgba(255,170,0,0.2);
+        .caja-modal {
+            background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px;
+            max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 25px; position: relative;
         }
-        .caja-login h3 { color: var(--neon-alerta); margin-bottom: 20px; font-size: 1.4rem; }
+        .caja-login { max-width: 420px; border-color: var(--neon-alerta); text-align: center; }
         .campo-input { width: 100%; padding: 12px; background: #040609; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; margin-bottom: 15px; font-size: 0.95rem; }
         .btn-entrar { background: var(--neon-alerta); color: black; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; }
 
-        /* PANEL DE GESTIÓN DE MODERADOR (CUANDO SE INICIA SESIÓN) */
+        /* GALERÍA EN MODAL */
+        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .galeria-item { background: #040609; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; }
+        .galeria-item img { width: 100%; height: 220px; object-fit: contain; padding: 10px; background: #070a0e; }
+        .btn-cotizar-muestra {
+            background: var(--neon-verde); color: white; border: none; width: 100%; padding: 8px;
+            font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: none; display: flex;
+            align-items: center; justify-content: center; gap: 5px;
+        }
+
+        /* PANEL DE GESTIÓN DE MODERADOR */
         .caja-panel-gestion {
             background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px;
             padding: 25px; margin-bottom: 30px; display: none;
@@ -189,10 +193,7 @@
             display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 25px rgba(37, 211, 102, 0.4); z-index: 150;
         }
 
-        /* PIE DE PÁGINA */
-        footer {
-            background: #020406; border-top: 1px solid rgba(255,255,255,0.05); padding: 30px 20px; text-align: center; color: var(--texto-gris); font-size: 0.88rem;
-        }
+        footer { background: #020406; border-top: 1px solid rgba(255,255,255,0.05); padding: 30px 20px; text-align: center; color: var(--texto-gris); font-size: 0.88rem; }
         footer a { color: var(--texto-gris); text-decoration: none; margin: 0 8px; }
         footer a:hover { color: var(--neon-azul); }
     </style>
@@ -216,6 +217,7 @@
     <nav>
         <button class="nav-btn activo" onclick="cambiarPestaña('inicio', this)">Inicio</button>
         <button class="nav-btn" onclick="cambiarPestaña('catalogo', this)">Ver Catálogo</button>
+        <button class="nav-btn" onclick="cambiarPestaña('bordados', this)">Bordados</button>
         <button class="nav-btn" onclick="cambiarPestaña('pagos', this)">Medios de Pago</button>
         <button class="nav-btn btn-admin-nav" id="btn-estado-sesion" onclick="abrirModalLogin()"><i class="fa-solid fa-lock"></i> Modo Moderador</button>
     </nav>
@@ -230,18 +232,19 @@
 
     <div class="container">
 
+        <!-- PANEL DE CONTROL DEL MODERADOR -->
         <div class="caja-panel-gestion">
             <h3>
                 <span><i class="fa-solid fa-user-gear"></i> Panel de Moderador Activo</span>
                 <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Cerrar Sesión</button>
             </h3>
-            <p style="font-size: 0.9rem; color: var(--texto-gris); margin-bottom: 15px;">Desde aquí puedes agregar nuevas prendas/fotos, cambiar precios y estados al instante en la base de datos.</p>
+            <p style="font-size: 0.9rem; color: var(--texto-gris); margin-bottom: 15px;">Añade prendas nuevas o modifica los estados del catálogo en tiempo real.</p>
             
             <form id="form-agregar-producto" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                 <input type="text" id="add-nombre" placeholder="Nombre de la prenda/muestra" class="campo-input" required style="margin: 0;">
-                <input type="text" id="add-categoria" placeholder="Categoría (Ej: Chalecos, Premium, Capuchones)" class="campo-input" required style="margin: 0;">
+                <input type="text" id="add-categoria" placeholder="Categoría (Ej: Chalecos, Premium)" class="campo-input" required style="margin: 0;">
                 <input type="text" id="add-precio" placeholder="Precio o Base (Ej: $85.000)" class="campo-input" required style="margin: 0;">
-                <input type="text" id="add-imagen" placeholder="URL o Ruta de Foto (Ej: img/chaleco-1.jpg)" class="campo-input" required style="margin: 0;">
+                <input type="text" id="add-imagen" placeholder="Ruta de Foto (Ej: img/foto-1.jpg)" class="campo-input" required style="margin: 0;">
                 <select id="add-estado" class="campo-input" style="margin: 0; background: #040609;">
                     <option value="normal">Estado: Normal</option>
                     <option value="nuevo">Nuevo Producto</option>
@@ -252,23 +255,41 @@
             </form>
         </div>
 
+        <!-- PESTAÑA INICIO -->
         <div id="pantalla-inicio" class="seccion-pantalla activa">
             <div class="bienvenida-box">
                 <h2>Exhibición Oficial de Muestras y Confección</h2>
-                <p>Visualiza con total claridad los modelos reales que fabricamos en nuestro taller, calidades textiles y precios base.</p>
-                <div style="margin-top: 25px;">
-                    <button class="btn-galeria" style="max-width: 300px; margin: 0 auto;" onclick="cambiarPestaña('catalogo', document.querySelectorAll('nav .nav-btn')[1])">
-                        <i class="fa-solid fa-folder-open"></i> Explorar Catálogo Completo
+                <p>Visualiza con total claridad los modelos reales que fabricamos en nuestro taller, calidades textiles, opciones de bordado y precios base.</p>
+                <div style="margin-top: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-galeria" style="max-width: 250px;" onclick="cambiarPestaña('catalogo', document.querySelectorAll('nav .nav-btn')[1])">
+                        <i class="fa-solid fa-folder-open"></i> Explorar Catálogo
+                    </button>
+                    <button class="btn-galeria" style="max-width: 250px; background: var(--neon-morado); color: white;" onclick="cambiarPestaña('bordados', document.querySelectorAll('nav .nav-btn')[2])">
+                        <i class="fa-solid fa-file-pen"></i> Ver Bordados
                     </button>
                 </div>
             </div>
         </div>
 
+        <!-- PESTAÑA CATÁLOGO -->
         <div id="pantalla-catalogo" class="seccion-pantalla">
             <div id="contenedor-catalogo-dinamico" class="grid-portadas">
-                </div>
+                <!-- Se generan dinámicamente -->
+            </div>
         </div>
 
+        <!-- PESTAÑA BORDADOS (NUEVA SECCIÓN) -->
+        <div id="pantalla-bordados" class="seccion-pantalla">
+            <div class="bienvenida-box" style="border-color: var(--neon-morado);">
+                <h2 style="color: var(--neon-morado);"><i class="fa-solid fa-file-pen"></i> Galería de Bordados Personalizados</h2>
+                <p>Personalizamos tus prendas industriales con logotipos de alta definición, nombres, cargos, banderas y tipos de sangre.</p>
+            </div>
+            <div id="contenedor-bordados-dinamico" class="grid-portadas">
+                <!-- Se genera automáticamente -->
+            </div>
+        </div>
+
+        <!-- PESTAÑA PAGOS -->
         <div id="pantalla-pagos" class="seccion-pantalla">
             <div style="max-width: 550px; margin: 0 auto; background: var(--bg-tarjeta); padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
                 <h3 style="color: var(--neon-azul); margin-bottom: 20px;"><i class="fa-solid fa-wallet"></i> Información de Pago</h3>
@@ -279,14 +300,28 @@
 
     </div>
 
-    <div id="modal-login" class="modal-admin">
-        <div class="caja-login">
-            <h3><i class="fa-solid fa-shield-halved"></i> Acceso Moderador</h3>
+    <!-- MODAL INICIO DE SESIÓN MODERADOR -->
+    <div id="modal-login" class="modal-overlay">
+        <div class="caja-modal caja-login">
+            <h3 style="color: var(--neon-alerta); margin-bottom: 15px;"><i class="fa-solid fa-shield-halved"></i> Acceso Moderador</h3>
             <p style="color: var(--texto-gris); font-size: 0.85rem; margin-bottom: 15px;">Ingresa tus credenciales para habilitar la edición del catálogo.</p>
             <input type="email" id="login-email" placeholder="Correo electrónico" class="campo-input">
             <input type="password" id="login-password" placeholder="Contraseña" class="campo-input">
             <button class="btn-entrar" onclick="iniciarSesionModerador()">Ingresar al Panel</button>
-            <button onclick="cerrarModalLogin()" style="background: transparent; border: none; color: var(--texto-gris); margin-top: 15px; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
+            <button onclick="cerrarModal('modal-login')" style="background: transparent; border: none; color: var(--texto-gris); margin-top: 15px; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL GALERÍA DE MUESTRAS -->
+    <div id="modal-galeria" class="modal-overlay">
+        <div class="caja-modal">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px;">
+                <h3 id="galeria-titulo" style="color: var(--neon-azul);">Muestras de la Línea</h3>
+                <button onclick="cerrarModal('modal-galeria')" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Cerrar ✕</button>
+            </div>
+            <div id="galeria-contenido" class="galeria-grid">
+                <!-- Se cargan dinámicamente las fotos de la categoría -->
+            </div>
         </div>
     </div>
 
@@ -308,16 +343,87 @@
     </footer>
 
     <script>
-        // Productos por defecto
-        const productosPredefinidos = [
-            { id: '1', nombre: 'Línea Premium', categoria: 'Chaquetas', precio: 'Base: $95.000', imagen: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reforzada a 3 hilos con 3 broches.' },
-            { id: '2', nombre: 'Línea Estándar', categoria: 'Chaquetas', precio: 'Base: $85.000', imagen: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reforzada a 2 hilos con 2 broches.' },
-            { id: '3', nombre: 'PRO Exclusivas', categoria: 'Chaquetas', precio: 'A Convenir', imagen: 'img/portada-exclusiva-1.jpg', estado: 'nuevo', desc: 'Camisas únicas con diseños de gran formato.' },
-            { id: '4', nombre: 'Premium Dama', categoria: 'Chaquetas', precio: '$95.000', imagen: 'img/portada-dama-1.jpg', estado: 'normal', desc: 'Confección con horma femenina estilizada.' },
-            { id: '5', nombre: 'Capuchones en Drill', categoria: 'Capuchones', precio: 'Unidad: $16.000', imagen: 'img/portada-capuchon-drill.jpg', estado: 'normal', desc: 'Protección industrial en tela Drill gruesa.' },
-            { id: '6', nombre: 'Capuchones en Dacrón', categoria: 'Capuchones', precio: 'Unidad: $12.000', imagen: 'img/portada-capuchon-dracon.jpg', estado: 'normal', desc: 'Diseño ligero y cómodo para trabajo diario.' },
-            { id: '7', nombre: 'Muestras de Bordados', categoria: 'Personalización', precio: 'Alta Calidad', imagen: 'img/bordados-1.jpg', estado: 'normal', desc: 'Bordados computarizados de logos y nombres.' }
+        // CONFIGURACIÓN DE LÍNEAS Y GALERÍAS SEGÚN TUS NOMBRES EXACTOS DE FOTOS
+        const lineasCatalogo = [
+            {
+                id: 'estandar',
+                nombre: 'Línea Estándar',
+                precio: 'Base: $85.000',
+                portada: 'img/portada-estandar-1.jpg',
+                estado: 'normal',
+                desc: 'Confección reforzada a 2 hilos con 2 broches. Calidad ideal para trabajo diario.',
+                prefijo: 'img/chaqueta-estandar-',
+                extension: '.jpg',
+                totalMuestras: 28
+            },
+            {
+                id: 'premium',
+                nombre: 'Línea Premium',
+                precio: 'Base: $95.000',
+                portada: 'img/portada-premium-1.jpg',
+                estado: 'normal',
+                desc: 'Confección reforzada a 3 hilos con 3 broches. Acabados de alta durabilidad.',
+                prefijo: 'img/chaqueta-premium-',
+                extension: '.jpg',
+                totalMuestras: 42
+            },
+            {
+                id: 'exclusiva',
+                nombre: 'PRO Exclusivas',
+                precio: 'A Convenir',
+                portada: 'img/portada-exclusiva-1.jpg',
+                estado: 'nuevo',
+                desc: 'Diseños de gran formato con cortes combinados únicos.',
+                prefijo: 'img/chaqueta-exclusiva-',
+                extension: '.jpg',
+                totalMuestras: 14
+            },
+            {
+                id: 'dama',
+                nombre: 'Premium Dama',
+                precio: '$95.000',
+                portada: 'img/portada-dama-1.jpg',
+                estado: 'normal',
+                desc: 'Confección con horma femenina estilizada y detalles entallados.',
+                prefijo: 'img/chaqueta-dama-',
+                extension: '.jpg',
+                totalMuestras: 10
+            },
+            {
+                id: 'capuchon-drill',
+                nombre: 'Capuchones en Drill',
+                precio: 'Unidad: $16.000',
+                portada: 'img/portada-capuchon-drill.jpg',
+                estado: 'normal',
+                desc: 'Protección industrial superior en tela Drill resistente.',
+                prefijo: 'img/capuchon-drill-',
+                extension: '.jpg',
+                totalMuestras: 26
+            },
+            {
+                id: 'capuchon-dracon',
+                nombre: 'Capuchones en Dacrón',
+                precio: 'Unidad: $12.000',
+                portada: 'img/portada-capuchon-dracon.jpg',
+                estado: 'normal',
+                desc: 'Diseño fresco, ligero y de fácil lavado para largas jornadas.',
+                prefijo: 'img/capuchon-dracon-',
+                extension: '.jpg',
+                totalMuestras: 46
+            }
         ];
+
+        const lineaBordados = {
+            id: 'bordados',
+            nombre: 'Muestras de Bordados Computarizados',
+            precio: 'Personalizado',
+            portada: 'img/portada-bordados-1.jpg',
+            estado: 'normal',
+            desc: 'Bordados de alta precisión para logos corporativos, nombres, cargos y banderas.',
+            prefijo: 'img/bordados-',
+            extension: '.jpg',
+            totalMuestras: 20
+        };
 
         function cambiarPestaña(pantallaId, boton) {
             document.querySelectorAll('.seccion-pantalla').forEach(s => s.classList.remove('activa'));
@@ -327,11 +433,11 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        function renderizarCatalogo(productos) {
+        function renderizarCatalogo() {
             const contenedor = document.getElementById('contenedor-catalogo-dinamico');
             contenedor.innerHTML = "";
 
-            productos.forEach(p => {
+            lineasCatalogo.forEach(p => {
                 let badgeEstado = "";
                 if(p.estado === 'promo') badgeEstado = `<span class="badge-estado promo">En Promo</span>`;
                 if(p.estado === 'agotado') badgeEstado = `<span class="badge-estado agotado">Agotado</span>`;
@@ -342,12 +448,14 @@
                         ${badgeEstado}
                         <div class="img-portada-contenedor">
                             <span class="badge-precio">${p.precio}</span>
-                            <img src="${p.imagen}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/300x300/0b0f14/00f0ff?text=${encodeURIComponent(p.nombre)}'">
+                            <img src="${p.portada}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/300x300/0b0f14/00f0ff?text=${encodeURIComponent(p.nombre)}'">
                         </div>
                         <div class="info-portada">
                             <h3>${p.nombre}</h3>
-                            <p>${p.desc || ''}</p>
-                            <button class="btn-galeria"><i class="fa-solid fa-images"></i> Ver Muestras</button>
+                            <p>${p.desc}</p>
+                            <button class="btn-galeria" onclick="abrirGaleria('${p.id}')">
+                                <i class="fa-solid fa-images"></i> Ver Muestras (${p.totalMuestras})
+                            </button>
                         </div>
                         <div class="panel-acciones-item">
                             <button class="btn-mod estado" onclick="cambiarEstadoPrenda('${p.id}', '${p.estado}')">Estado: ${p.estado}</button>
@@ -356,19 +464,63 @@
                     </div>
                 `;
             });
+
+            // Cargar tarjeta en la pestaña Bordados
+            const contenedorBordados = document.getElementById('contenedor-bordados-dinamico');
+            contenedorBordados.innerHTML = `
+                <div class="tarjeta-portada" style="max-width: 400px; margin: 0 auto;">
+                    <div class="img-portada-contenedor">
+                        <span class="badge-precio">${lineaBordados.precio}</span>
+                        <img src="${lineaBordados.portada}" alt="${lineaBordados.nombre}" onerror="this.src='https://via.placeholder.com/300x300/0b0f14/bf55ec?text=Bordados'">
+                    </div>
+                    <div class="info-portada">
+                        <h3>${lineaBordados.nombre}</h3>
+                        <p>${lineaBordados.desc}</p>
+                        <button class="btn-galeria" style="background: var(--neon-morado); color: white;" onclick="abrirGaleria('bordados')">
+                            <i class="fa-solid fa-images"></i> Ver Galería de Bordados (${lineaBordados.totalMuestras})
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
-        // Funciones del Modal de Login
+        // ABRIR GALERÍA CON MUESTRAS
+        function abrirGaleria(idLinea) {
+            let linea = lineasCatalogo.find(l => l.id === idLinea);
+            if(!linea && idLinea === 'bordados') linea = lineaBordados;
+            if(!linea) return;
+
+            document.getElementById('galeria-titulo').innerText = `Muestras: ${linea.nombre}`;
+            const contenedorModal = document.getElementById('galeria-contenido');
+            contenedorModal.innerHTML = "";
+
+            for(let i = 1; i <= linea.totalMuestras; i++) {
+                const rutaFoto = `${linea.prefijo}${i}${linea.extension}`;
+                const mensajeWa = encodeURIComponent(`*Hola Reyand InduPro!* Me interesa cotizar esta muestra de ${linea.nombre}: ${rutaFoto}`);
+                
+                contenedorModal.innerHTML += `
+                    <div class="galeria-item">
+                        <img src="${rutaFoto}" alt="Muestra ${i}" onerror="this.src='https://via.placeholder.com/200x200/0b0f14/00f0ff?text=Foto+${i}'">
+                        <a href="https://api.whatsapp.com/send?phone=573184250115&text=${mensajeWa}" target="_blank" class="btn-cotizar-muestra">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar Esta
+                        </a>
+                    </div>
+                `;
+            }
+
+            document.getElementById('modal-galeria').style.display = "flex";
+        }
+
         function abrirModalLogin() { document.getElementById('modal-login').style.display = "flex"; }
-        function cerrarModalLogin() { document.getElementById('modal-login').style.display = "none"; }
+        function cerrarModal(modalId) { document.getElementById(modalId).style.display = "none"; }
 
         async function iniciarSesionModerador() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             try {
                 await window.firebaseFunctions.signInWithEmailAndPassword(window.auth, email, password);
-                alert("¡Bienvenido, Moderador!");
-                cerrarModalLogin();
+                alert("¡Bienvenido al Panel de Moderador!");
+                cerrarModal('modal-login');
             } catch (error) {
                 alert("Error de acceso: Credenciales incorrectas.");
             }
@@ -379,9 +531,8 @@
             alert("Sesión de moderador cerrada.");
         }
 
-        // Evento de estado de Autenticación de Firebase
         window.addEventListener('DOMContentLoaded', () => {
-            renderizarCatalogo(productosPredefinidos);
+            renderizarCatalogo();
 
             setTimeout(() => {
                 if(window.auth) {
@@ -398,7 +549,6 @@
             }, 1000);
         });
 
-        // Evento para agregar prendas nuevas
         document.getElementById('form-agregar-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nuevaPrenda = {
@@ -406,33 +556,36 @@
                 nombre: document.getElementById('add-nombre').value,
                 categoria: document.getElementById('add-categoria').value,
                 precio: document.getElementById('add-precio').value,
-                imagen: document.getElementById('add-imagen').value,
+                portada: document.getElementById('add-imagen').value,
                 estado: document.getElementById('add-estado').value,
-                desc: 'Prenda personalizada añadida por el moderador.'
+                desc: 'Prenda o muestra agregada por el moderador.',
+                prefijo: 'img/',
+                extension: '.jpg',
+                totalMuestras: 1
             };
-            productosPredefinidos.unshift(nuevaPrenda);
-            renderizarCatalogo(productosPredefinidos);
+            lineasCatalogo.unshift(nuevaPrenda);
+            renderizarCatalogo();
             alert("¡Prenda guardada exitosamente!");
             e.target.reset();
         });
 
         function eliminarPrenda(id) {
-            if(confirm("¿Estás seguro de que deseas eliminar esta prenda del catálogo?")) {
-                const index = productosPredefinidos.findIndex(p => p.id === id);
-                if(index !== -1) {
-                    productosPredefinidos.splice(index, 1);
-                    renderizarCatalogo(productosPredefinidos);
+            if(confirm("¿Deseas eliminar esta prenda del catálogo?")) {
+                const idx = lineasCatalogo.findIndex(l => l.id === id);
+                if(idx !== -1) {
+                    lineasCatalogo.splice(idx, 1);
+                    renderizarCatalogo();
                 }
             }
         }
 
         function cambiarEstadoPrenda(id, estadoActual) {
             const estados = ['normal', 'nuevo', 'promo', 'agotado'];
-            const siguienteEstado = estados[(estados.indexOf(estadoActual) + 1) % estados.length];
-            const prenda = productosPredefinidos.find(p => p.id === id);
+            const sig = estados[(estados.indexOf(estadoActual) + 1) % estados.length];
+            const prenda = lineasCatalogo.find(l => l.id === id);
             if(prenda) {
-                prenda.estado = siguienteEstado;
-                renderizarCatalogo(productosPredefinidos);
+                prenda.estado = sig;
+                renderizarCatalogo();
             }
         }
     </script>
