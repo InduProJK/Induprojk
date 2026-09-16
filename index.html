@@ -3,442 +3,442 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reyand InduPro | Catálogo Industrial</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SDKs de Firebase v9 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyB54k-MuLoqtkI7CSVt1UsHvPt5XY_rI5s",
-            authDomain: "reyand-indupro.firebaseapp.com",
-            projectId: "reyand-indupro",
-            storageBucket: "reyand-indupro.firebasestorage.app",
-            messagingSenderId: "927807451159",
-            appId: "1:927807451159:web:e9a599ecfab290abe16c52",
-            measurementId: "G-6FBN8NPH6X"
-        };
-        const app = initializeApp(firebaseConfig);
-        window.auth = getAuth(app);
-        window.db = getFirestore(app);
-        window.storage = getStorage(app);
-        window.fb = { 
-            signInWithEmailAndPassword, signOut, onAuthStateChanged, 
-            collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, setDoc,
-            ref, uploadBytes, getDownloadURL 
-        };
-    </script>
+    <title>Reyand InduPro | Dotaciones Industriales</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- jsPDF para generación de PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
-        :root {
-            --bg-principal: #040609;
-            --bg-tarjeta: #0b0f14;
-            --neon-azul: #00f0ff;
-            --neon-morado: #bf55ec;
-            --neon-rosado: #ff64b4;
-            --neon-verde: #25D366;
-            --neon-alerta: #ffaa00;
-            --texto-blanco: #ffffff;
-            --texto-gris: #8b949e;
-            --rojo-eliminar: #ff3344;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--bg-principal); color: var(--texto-blanco); }
-        
-        header { text-align: center; padding: 35px 20px 20px 20px; background: linear-gradient(180deg, #020406 0%, #040609 100%); position: relative; }
-        
-        .btn-candado-moderador {
-            position: absolute; top: 10px; right: 10px;
-            background: transparent; color: rgba(255, 255, 255, 0.12);
-            width: 30px; height: 30px; border-radius: 50%; border: none;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.85rem; cursor: pointer; transition: 0.3s; z-index: 10;
-        }
-        .btn-candado-moderador:hover { color: var(--neon-alerta); }
-        .modo-moderador-activo .btn-candado-moderador { color: var(--neon-verde); }
-
-        .logo-box img { max-width: 170px; width: 100%; height: auto; border-radius: 50%; box-shadow: 0 0 25px var(--neon-azul); margin-bottom: 15px; }
-        header h1 { font-size: 2.3rem; color: white; }
-        header p { color: var(--texto-gris); font-size: 0.95rem; margin-top: 6px; }
-        
-        .redes-header { display: flex; justify-content: center; gap: 18px; margin-top: 15px; }
-        .redes-header a { color: white; font-size: 1.3rem; width: 40px; height: 40px; border-radius: 50%; background: #0d131a; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); text-decoration: none; }
-
-        nav { display: flex; justify-content: center; background: #020406; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; }
-        .nav-btn { background: transparent; border: none; color: var(--texto-gris); padding: 16px 22px; font-size: 0.95rem; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; }
-        .nav-btn.activo { color: var(--neon-azul); border-bottom-color: var(--neon-azul); }
-
-        .container { max-width: 1200px; margin: 20px auto 40px auto; padding: 0 20px 60px 20px; }
-        .seccion-pantalla { display: none; }
-        .seccion-pantalla.activa { display: block; }
-
-        .grid-portadas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-        .tarjeta-portada { background: var(--bg-tarjeta); border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; position: relative; }
-        
-        .img-portada-contenedor { width: 100%; height: 280px; background: #070a0e; position: relative; display: flex; justify-content: center; align-items: center; padding: 10px; }
-        .img-portada-contenedor img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
-        
-        .badge-estado { position: absolute; top: 12px; left: 12px; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; z-index: 10; }
-        .badge-estado.promo { background: var(--neon-alerta); color: #000; }
-        .badge-estado.agotado { background: var(--rojo-eliminar); color: #fff; }
-        .badge-estado.nuevo { background: var(--neon-verde); color: #000; }
-        
-        .badge-precio { position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.85); color: var(--neon-azul); padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; border: 1px solid var(--neon-azul); z-index: 10; }
-        .info-portada { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 12px; }
-        
-        .btn-galeria { background: var(--neon-azul); color: #000; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 7px; cursor: pointer; font-size: 0.88rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
-
-        .caja-panel-gestion { background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px; padding: 20px; margin-bottom: 30px; display: none; }
-        .modo-moderador-activo .caja-panel-gestion { display: block; }
-        
-        .panel-acciones-item { display: none; background: #160305; border-top: 1px solid var(--rojo-eliminar); padding: 10px; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
-        .modo-moderador-activo .panel-acciones-item { display: flex; }
-        .btn-mod { padding: 6px 10px; border-radius: 4px; border: none; font-size: 0.78rem; font-weight: bold; cursor: pointer; }
-        .btn-mod.eliminar { background: var(--rojo-eliminar); color: white; }
-        .btn-mod.estado { background: var(--neon-alerta); color: black; }
-        .btn-mod.editar { background: var(--neon-azul); color: black; }
-
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 300; justify-content: center; align-items: center; padding: 20px; }
-        .caja-modal { background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 25px; position: relative; }
-        .caja-login { max-width: 380px; border-color: var(--neon-alerta); text-align: center; }
-        .campo-input { width: 100%; padding: 10px 12px; background: #040609; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; margin-bottom: 12px; font-size: 0.9rem; }
-
-        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
-        .galeria-item { background: #040609; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; display: flex; flex-direction: column; }
-        .galeria-item img { width: 100%; height: 200px; object-fit: contain; padding: 10px; background: #070a0e; }
-        .numero-muestra-tag { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.85); color: var(--neon-azul); border: 1px solid var(--neon-azul); font-weight: bold; font-size: 0.8rem; padding: 3px 8px; border-radius: 4px; z-index: 5; }
-        .btn-cotizar-muestra { background: var(--neon-verde); color: white; border: none; width: 100%; padding: 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: auto; }
-
-        .btn-whatsapp-global { position: fixed; bottom: 25px; right: 25px; background: var(--neon-verde); color: white; padding: 14px 22px; border-radius: 50px; font-weight: bold; font-size: 1rem; text-decoration: none; display: flex; align-items: center; gap: 10px; z-index: 150; }
+        .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: bold; }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
 
-    <header>
-        <button class="btn-candado-moderador" onclick="abrirModalLogin()" title="Desarrollador">
-            <i class="fa-solid fa-lock" id="icono-candado"></i>
-        </button>
-        <div class="logo-box">
-            <img src="img/logo-induprojk.jpg" alt="Reyand InduPro" onerror="this.src='https://via.placeholder.com/170/0b0f14/00f0ff?text=Reyand'">
+    <!-- ENCABEZADO -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg font-black text-xl">R</div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Reyand InduPro</h1>
+                    <p class="text-xs text-slate-400">Ropa de Trabajo y Proteccion Industrial</p>
+                </div>
+            </div>
+            <!-- Botón Admin (Candado) -->
+            <button id="btn-admin-modal" onclick="toggleAdminModal()" class="p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition">
+                <i data-lucide="lock" class="w-5 h-5"></i>
+            </button>
         </div>
-        <h1>Reyand InduPro</h1>
-        <p>Prendas Industriales y Dotaciones 100% Personalizables</p>
+        <!-- PESTAÑAS DE NAVEGACIÓN -->
+        <div class="bg-slate-800 border-t border-slate-700">
+            <div class="max-w-6xl mx-auto flex text-sm">
+                <button id="tab-btn-catalog" onclick="switchTab('catalog')" class="flex-1 py-3 text-center text-slate-300 hover:text-white tab-active flex justify-center items-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> Catálogo
+                </button>
+                <button id="tab-btn-quote" onclick="switchTab('quote')" class="flex-1 py-3 text-center text-slate-300 hover:text-white flex justify-center items-center gap-2">
+                    <i data-lucide="calculator" class="w-4 h-4"></i> Cotizador / PDF
+                </button>
+            </div>
+        </div>
     </header>
 
-    <nav>
-        <button class="nav-btn activo" onclick="cambiarPestaña('catalogo', this)">Catálogo</button>
-        <button class="nav-btn" onclick="cambiarPestaña('bordados', this)">Bordados</button>
-    </nav>
-
-    <div class="container">
-
-        <!-- PANEL DE EDICIÓN MÓVIL (SÓLO VISIBLE AL INICIAR SESIÓN) -->
-        <div class="caja-panel-gestion">
-            <h3 style="color:var(--neon-azul); margin-bottom:15px; display:flex; justify-space-between; align-items:center;">
-                <span><i class="fa-solid fa-mobile-screen-button"></i> Panel de Control Móvil</span>
-                <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Salir</button>
-            </h3>
-            
-            <form id="form-crear-categoria" style="display: grid; gap: 10px;">
-                <input type="text" id="cat-nombre" placeholder="Nombre de la prenda o línea" class="campo-input" required>
-                <input type="text" id="cat-precio" placeholder="Precio Base (Ej: $75.000)" class="campo-input" required>
-                <input type="text" id="cat-desc" placeholder="Descripción amplia" class="campo-input" required>
-                <select id="cat-tipo" class="campo-input">
-                    <option value="general">Línea de Catálogo</option>
-                    <option value="bordado">Servicio de Bordado</option>
+    <!-- PANEL DE ADMINISTRADOR (Oculto por defecto) -->
+    <div id="admin-panel" class="hidden bg-amber-50 border-b border-amber-200 p-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-sm font-bold text-amber-800 flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i> Panel de Administración Activo
+                </h3>
+                <button onclick="logoutAdmin()" class="text-xs text-red-600 font-semibold hover:underline">Cerrar Sesión</button>
+            </div>
+            <!-- Formulario para agregar producto -->
+            <form id="form-add-product" onsubmit="handleAddProduct(event)" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+                <input type="text" id="p-name" placeholder="Nombre de la prenda (ej. Camisa Drill)" required class="p-2 border rounded">
+                <input type="number" id="p-price" placeholder="Precio ($ COP)" required class="p-2 border rounded">
+                <select id="p-status" class="p-2 border rounded">
+                    <option value="Disponible">Disponible</option>
+                    <option value="Nuevo">Nuevo</option>
+                    <option value="En Promo">En Promo</option>
+                    <option value="Agotado">Agotado</option>
                 </select>
-                <label style="font-size: 0.8rem; color: var(--neon-azul);">Imagen de Portada:</label>
-                <input type="file" id="cat-foto" accept="image/*" class="campo-input" required>
-                <button type="submit" id="btn-guardar-cat" class="btn-galeria" style="background:var(--neon-verde);">+ Publicar Nueva Prenda</button>
+                <input type="file" id="p-image" accept="image/*" class="p-1 border rounded text-xs">
+                <textarea id="p-desc" placeholder="Descripción opcional" class="p-2 border rounded md:col-span-3"></textarea>
+                <button type="submit" id="btn-save-p" class="bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700">
+                    Guardar Producto
+                </button>
             </form>
         </div>
-
-        <div id="pantalla-catalogo" class="seccion-pantalla activa">
-            <div id="contenedor-catalogo-dinamico" class="grid-portadas"></div>
-        </div>
-
-        <div id="pantalla-bordados" class="seccion-pantalla">
-            <div id="contenedor-bordados-dinamico" class="grid-portadas"></div>
-        </div>
-
     </div>
 
-    <!-- MODAL INICIO SESIÓN -->
-    <div id="modal-login" class="modal-overlay">
-        <div class="caja-modal caja-login">
-            <h3 style="color: var(--neon-alerta); margin-bottom: 15px;"><i class="fa-solid fa-shield-halved"></i> Acceso Moderador</h3>
-            <input type="text" id="login-email" placeholder="Usuario" class="campo-input">
-            <input type="password" id="login-password" placeholder="Contraseña" class="campo-input">
-            <button class="btn-galeria" style="background:var(--neon-alerta);" onclick="iniciarSesionModerador()">Ingresar</button>
-            <button onclick="cerrarModal('modal-login')" style="background: transparent; border: none; color: var(--texto-gris); margin-top: 15px; cursor: pointer;">Cancelar</button>
+    <!-- SECCIÓN 1: CATÁLOGO DE PRODUCTOS -->
+    <main id="section-catalog" class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-slate-800">Prendas y Dotaciones</h2>
+            <span id="product-count" class="text-xs bg-slate-200 text-slate-700 px-2 py-1 rounded-full font-semibold">Cargando...</span>
         </div>
-    </div>
+        <!-- Grid de productos -->
+        <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="col-span-full text-center py-12 text-slate-400">Cargando catálogo...</div>
+        </div>
+    </main>
 
-    <!-- MODAL GALERÍA Y SUBIDA DE MUESTRAS -->
-    <div id="modal-galeria" class="modal-overlay">
-        <div class="caja-modal">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px;">
-                <h3 id="galeria-titulo" style="color: var(--neon-azul);">Muestras de la Línea</h3>
-                <button onclick="cerrarModal('modal-galeria')" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Cerrar ✕</button>
+    <!-- SECCIÓN 2: COTIZADOR & GENERADOR PDF -->
+    <main id="section-quote" class="hidden max-w-4xl mx-auto px-4 py-6 flex-grow w-full">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i> Cotizador de Pedidos
+            </h2>
+            
+            <!-- Datos del Cliente -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente / Empresa</label>
+                    <input type="text" id="quote-client" placeholder="Ej. Constructora SAS" class="w-full p-2 border rounded text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono de Contacto</label>
+                    <input type="text" id="quote-phone" placeholder="Ej. 3001234567" class="w-full p-2 border rounded text-sm">
+                </div>
             </div>
 
-            <div class="caja-panel-gestion" style="margin-bottom: 15px; border-color: var(--neon-verde);">
-                <h4 style="color: var(--neon-verde); font-size: 0.9rem; margin-bottom: 10px;">+ Cargar nueva muestra a este catálogo</h4>
-                <form id="form-subir-muestra" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <input type="file" id="muestra-foto" accept="image/*" class="campo-input" style="margin:0; flex: 1;" required>
-                    <button type="submit" class="btn-galeria" style="background: var(--neon-verde); width: auto; padding: 8px 16px;">Subir Foto</button>
-                </form>
+            <!-- Items de Cotización -->
+            <div class="border-t pt-4">
+                <h3 class="text-sm font-bold text-slate-700 mb-3">Agregar Prendas / Servicios</h3>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 mb-4">
+                    <input type="text" id="item-desc" placeholder="Descripción (ej. Camisa Drill c/ Nombre y RH)" class="md:col-span-5 p-2 border rounded text-sm">
+                    <input type="number" id="item-qty" placeholder="Cant." min="1" class="md:col-span-2 p-2 border rounded text-sm">
+                    <input type="number" id="item-price" placeholder="Precio Unit." class="md:col-span-3 p-2 border rounded text-sm">
+                    <button onclick="addQuoteItem()" class="md:col-span-2 bg-slate-800 text-white font-semibold py-2 rounded text-sm hover:bg-slate-700">
+                        + Agregar
+                    </button>
+                </div>
             </div>
 
-            <div id="galeria-contenido" class="galeria-grid"></div>
+            <!-- Tabla de Resumen -->
+            <div class="overflow-x-auto my-4">
+                <table class="w-full text-sm text-left border">
+                    <thead class="bg-slate-100 text-slate-700 uppercase text-xs">
+                        <tr>
+                            <th class="p-2 border">Ítem / Detalle</th>
+                            <th class="p-2 border text-center">Cant.</th>
+                            <th class="p-2 border text-right">Unitario</th>
+                            <th class="p-2 border text-right">Subtotal</th>
+                            <th class="p-2 border text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quote-table-body">
+                        <tr>
+                            <td colspan="5" class="p-4 text-center text-slate-400">No hay ítems agregados a la cotización.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Total y Botones de Acción -->
+            <div class="flex flex-col sm:flex-row justify-between items-center pt-4 border-t gap-4">
+                <div class="text-lg font-bold text-slate-800">
+                    Total Cotización: <span id="quote-total-val" class="text-blue-600">$0 COP</span>
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="generatePDF()" class="flex-1 sm:flex-none bg-red-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-red-700 text-sm flex items-center justify-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Descargar PDF
+                    </button>
+                    <button onclick="sendQuoteWhatsApp()" class="flex-1 sm:flex-none bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-emerald-700 text-sm flex items-center justify-center gap-2">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> Enviar por WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-slate-900 text-slate-400 py-6 mt-auto text-xs text-center border-t border-slate-800">
+        <p>© 2026 Reyand InduPro - Bogotá, Colombia. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- MODAL INICIO DE SESIÓN ADMIN -->
+    <div id="modal-login" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="lock" class="w-5 h-5 text-blue-600"></i> Acceso Administrativo
+            </h3>
+            <form onsubmit="handleLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Correo Electrónico</label>
+                    <input type="email" id="login-email" required class="w-full p-2 border rounded text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Contraseña</label>
+                    <input type="password" id="login-pass" required class="w-full p-2 border rounded text-sm">
+                </div>
+                <p id="login-error" class="text-xs text-red-600 hidden">Credenciales incorrectas.</p>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="toggleAdminModal()" class="px-3 py-2 text-slate-600 text-xs font-semibold">Cancelar</button>
+                    <button type="submit" class="bg-blue-600 text-white font-bold px-4 py-2 rounded text-xs hover:bg-blue-700">Ingresar</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <a href="https://api.whatsapp.com/send?phone=573184250115&text=*Hola!%20Vengo%20desde%20el%20Cat%C3%A1logo%20Digital%20de%20Reyand%20InduPro.*" target="_blank" class="btn-whatsapp-global">
-        <i class="fa-brands fa-whatsapp" style="font-size: 1.4rem;"></i> Cotizar por WhatsApp
-    </a>
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <script>
-        let categoriaSeleccionadaId = null;
-        let esModerador = false;
+        // CONFIGURACIÓN DE FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-EXAMPLE-KEY",
+            authDomain: "reyand-indupro.firebaseapp.com",
+            projectId: "reyand-indupro",
+            storageBucket: "reyand-indupro.appspot.com",
+            messagingSenderId: "927807451159",
+            appId: "1:927807451159:web:a1b2c3d4e5f6"
+        };
 
-        function cambiarPestaña(pantallaId, boton) {
-            document.querySelectorAll('.seccion-pantalla').forEach(s => s.classList.remove('activa'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
-            document.getElementById(`pantalla-${pantallaId}`).classList.add('activa');
-            if(boton) boton.classList.add('activo');
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        const auth = firebase.auth();
+
+        // Iconos
+        lucide.createIcons();
+
+        // VARIABLES GLOBALES
+        let quoteItems = [];
+        let isAdmin = false;
+
+        // MANEJO DE PESTAÑAS
+        function switchTab(tab) {
+            document.getElementById('section-catalog').classList.toggle('hidden', tab !== 'catalog');
+            document.getElementById('section-quote').classList.toggle('hidden', tab !== 'quote');
+            document.getElementById('tab-btn-catalog').classList.toggle('tab-active', tab === 'catalog');
+            document.getElementById('tab-btn-quote').classList.toggle('tab-active', tab === 'quote');
         }
 
-        // CATÁLOGOS BASE DE RESPALDO (Para evitar pantallas en blanco)
-        const catalogosBase = [
-            { id: "linea-estandar", nombre: "Línea Estándar", precio: "$65.000", desc: "Camisas en drill sencillas de alta durabilidad para trabajo operativo.", portada: "img/estandar.jpg", tipo: "general", estado: "normal" },
-            { id: "linea-premium", nombre: "Línea Premium", precio: "$85.000", desc: "Diseños combinados con cintas reflectivas de alta visibilidad.", portada: "img/premium.jpg", tipo: "general", estado: "nuevo" },
-            { id: "capuchones-drill", nombre: "Capuchones de Drill", precio: "$25.000", desc: "Protección facial y del cuello con ajuste cómodo para casco.", portada: "img/capuchon.jpg", tipo: "general", estado: "normal" },
-            { id: "servicio-bordados", nombre: "Bordados Personalizados", precio: "$8.000", desc: "Logotipos corporativos, nombres, cargos y banderas.", portada: "img/bordados.jpg", tipo: "bordado", estado: "normal" }
-        ];
-
-        function cargarDatosPagina() {
-            const q = window.fb.query(window.fb.collection(window.db, "categorias"), window.fb.orderBy("creadoEn", "asc"));
-            window.fb.onSnapshot(q, (snapshot) => {
-                const contenedorCat = document.getElementById('contenedor-catalogo-dinamico');
-                const contenedorBordados = document.getElementById('contenedor-bordados-dinamico');
-                contenedorCat.innerHTML = "";
-                contenedorBordados.innerHTML = "";
-
-                let lista = [];
-                if (snapshot.empty) {
-                    // Si Firestore está vacío, muestra los base
-                    lista = catalogosBase;
-                } else {
-                    snapshot.forEach(docSnap => {
-                        lista.push({ id: docSnap.id, ...docSnap.data() });
-                    });
-                }
-
-                lista.forEach(data => {
-                    let badgeEstado = "";
-                    if(data.estado === 'promo') badgeEstado = `<span class="badge-estado promo">En Promo</span>`;
-                    if(data.estado === 'agotado') badgeEstado = `<span class="badge-estado agotado">Agotado</span>`;
-                    if(data.estado === 'nuevo') badgeEstado = `<span class="badge-estado nuevo">Nuevo</span>`;
-
-                    const htmlTarjeta = `
-                        <div class="tarjeta-portada">
-                            ${badgeEstado}
-                            <div class="img-portada-contenedor">
-                                <span class="badge-precio">${data.precio}</span>
-                                <img src="${data.portada}" alt="${data.nombre}" onerror="this.src='https://via.placeholder.com/300x300/0b0f14/00f0ff?text=${encodeURIComponent(data.nombre)}'">
-                            </div>
-                            <div class="info-portada">
-                                <h3>${data.nombre}</h3>
-                                <p>${data.desc}</p>
-                                <button class="btn-galeria" onclick="abrirGaleria('${data.id}', '${data.nombre}')">
-                                    <i class="fa-solid fa-images"></i> Ver Muestras
-                                </button>
-                            </div>
-                            <div class="panel-acciones-item">
-                                <button class="btn-mod estado" onclick="cambiarEstadoCat('${data.id}', '${data.estado || 'normal'}')">Estado: ${data.estado || 'normal'}</button>
-                                <button class="btn-mod editar" onclick="editarCategoria('${data.id}', '${data.nombre}', '${data.precio}', '${data.desc}')">Editar</button>
-                                <button class="btn-mod eliminar" onclick="eliminarCategoria('${data.id}')"><i class="fa-solid fa-trash"></i> Borrar</button>
-                            </div>
-                        </div>
-                    `;
-
-                    if(data.tipo === 'bordado') {
-                        contenedorBordados.innerHTML += htmlTarjeta;
-                    } else {
-                        contenedorCat.innerHTML += htmlTarjeta;
-                    }
-                });
-            });
+        // CONTROL DE MODAL ADMIN
+        function toggleAdminModal() {
+            const modal = document.getElementById('modal-login');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
         }
 
-        // ABRIR GALERÍA Y CARGAR MUESTRAS
-        function abrirGaleria(catId, nombreCat) {
-            categoriaSeleccionadaId = catId;
-            document.getElementById('galeria-titulo').innerText = `Muestras: ${nombreCat}`;
-            const contenedorModal = document.getElementById('galeria-contenido');
-            contenedorModal.innerHTML = "<p style='color:var(--texto-gris); padding:10px;'>Cargando galeria...</p>";
-            document.getElementById('modal-galeria').style.display = "flex";
-
-            const q = window.fb.query(window.fb.collection(window.db, `categorias/${catId}/muestras`), window.fb.orderBy("creadoEn", "asc"));
-            window.fb.onSnapshot(q, (snapshot) => {
-                contenedorModal.innerHTML = "";
-                let i = 1;
-                if(snapshot.empty) {
-                    contenedorModal.innerHTML = "<p style='color:var(--texto-gris); grid-column:1/-1; text-align:center;'>Aún no hay muestras subidas a este catálogo.</p>";
-                }
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const muestraId = docSnap.id;
-                    const textowhatsapp = `*Hola Reyand InduPro!* Me interesa cotizar la muestra: *${nombreCat} #${i}*`;
-
-                    contenedorModal.innerHTML += `
-                        <div class="galeria-item">
-                            <span class="numero-muestra-tag">#${i}</span>
-                            <img src="${data.url}" alt="${nombreCat} #${i}">
-                            <a href="https://api.whatsapp.com/send?phone=573184250115&text=${encodeURIComponent(textowhatsapp)}" target="_blank" class="btn-cotizar-muestra">
-                                <i class="fa-brands fa-whatsapp"></i> Cotizar #${i}
-                            </a>
-                            ${esModerador ? `<button onclick="eliminarMuestra('${catId}', '${muestraId}')" style="background:var(--rojo-eliminar); color:white; border:none; padding:5px; cursor:pointer; font-size:0.75rem;">Eliminar Foto</button>` : ''}
-                        </div>
-                    `;
-                    i++;
-                });
-            });
-        }
-
-        // CREAR NUEVA CATEGORÍA CON SUBIDA DE IMAGEN
-        document.getElementById('form-crear-categoria').addEventListener('submit', async (e) => {
+        function handleLogin(e) {
             e.preventDefault();
-            const btn = document.getElementById('btn-guardar-cat');
-            btn.innerText = "Subiendo archivo...";
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    toggleAdminModal();
+                    document.getElementById('login-error').classList.add('hidden');
+                })
+                .catch(() => {
+                    document.getElementById('login-error').classList.remove('hidden');
+                });
+        }
+
+        function logoutAdmin() {
+            auth.signOut();
+        }
+
+        // VERIFICAR ESTADO DE AUTENTICACIÓN
+        auth.onAuthStateChanged(user => {
+            isAdmin = !!user;
+            document.getElementById('admin-panel').classList.toggle('hidden', !isAdmin);
+            loadProducts();
+        });
+
+        // CARGAR PRODUCTOS DESDE FIRESTORE
+        function loadProducts() {
+            db.collection('products').onSnapshot(snapshot => {
+                const grid = document.getElementById('catalog-grid');
+                grid.innerHTML = '';
+                let count = 0;
+
+                snapshot.forEach(doc => {
+                    count++;
+                    const p = doc.data();
+                    const id = doc.id;
+                    const card = `
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                            <div class="h-48 bg-slate-100 relative">
+                                <img src="${p.imageUrl || 'https://via.placeholder.com/300?text=Reyand+InduPro'}" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-slate-900/80 text-white text-xs px-2 py-0.5 rounded font-semibold">${p.status || 'Disponible'}</span>
+                            </div>
+                            <div class="p-4 flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-bold text-slate-800">${p.name}</h3>
+                                    <p class="text-xs text-slate-500 mt-1">${p.description || ''}</p>
+                                </div>
+                                <div class="mt-4 pt-3 border-t flex justify-between items-center">
+                                    <span class="text-lg font-black text-blue-600">$${Number(p.price).toLocaleString('es-CO')}</span>
+                                    <button onclick="quickAddQuote('${p.name}', ${p.price})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-2 py-1.5 rounded flex items-center gap-1">
+                                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Cotizar
+                                    </button>
+                                </div>
+                                ${isAdmin ? `
+                                    <button onclick="deleteProduct('${id}')" class="mt-2 w-full text-center text-xs text-red-500 hover:underline">Eliminar Prenda</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    grid.innerHTML += card;
+                });
+
+                document.getElementById('product-count').innerText = `${count} Prendas`;
+                lucide.createIcons();
+            });
+        }
+
+        // AGREGAR PRODUCTO (ADMIN)
+        async function handleAddProduct(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-p');
             btn.disabled = true;
+            btn.innerText = "Guardando...";
 
             try {
-                const fotoInput = document.getElementById('cat-foto');
-                let urlPortada = "https://via.placeholder.com/300";
+                const name = document.getElementById('p-name').value;
+                const price = Number(document.getElementById('p-price').value);
+                const status = document.getElementById('p-status').value;
+                const desc = document.getElementById('p-desc').value;
+                const imgFile = document.getElementById('p-image').files[0];
 
-                if(fotoInput.files.length > 0) {
-                    const file = fotoInput.files[0];
-                    const storageRef = window.fb.ref(window.storage, 'portadas/' + Date.now() + '_' + file.name);
-                    const snapshot = await window.fb.uploadBytes(storageRef, file);
-                    urlPortada = await window.fb.getDownloadURL(snapshot.ref);
+                let imageUrl = "";
+                if (imgFile) {
+                    const storageRef = storage.ref(`products/${Date.now()}_${imgFile.name}`);
+                    await storageRef.put(imgFile);
+                    imageUrl = await storageRef.getDownloadURL();
                 }
 
-                await window.fb.addDoc(window.fb.collection(window.db, "categorias"), {
-                    nombre: document.getElementById('cat-nombre').value,
-                    precio: document.getElementById('cat-precio').value,
-                    desc: document.getElementById('cat-desc').value,
-                    tipo: document.getElementById('cat-tipo').value,
-                    portada: urlPortada,
-                    estado: 'normal',
-                    creadoEn: Date.now()
+                await db.collection('products').add({
+                    name, price, status, description: desc, imageUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                alert("¡Prenda o línea agregada con éxito!");
-                e.target.reset();
+                document.getElementById('form-add-product').reset();
             } catch (err) {
-                alert("Error al guardar: " + err.message);
+                alert("Error al guardar prenda: " + err.message);
             } finally {
-                btn.innerText = "+ Publicar Nueva Prenda";
                 btn.disabled = false;
+                btn.innerText = "Guardar Producto";
             }
-        });
+        }
 
-        // SUBIR MUESTRA EN MODAL
-        document.getElementById('form-subir-muestra').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fotoInput = document.getElementById('muestra-foto');
-            if(fotoInput.files.length === 0 || !categoriaSeleccionadaId) return;
+        // ELIMINAR PRODUCTO (ADMIN)
+        function deleteProduct(id) {
+            if (confirm("¿Seguro que deseas eliminar esta prenda?")) {
+                db.collection('products').doc(id).delete();
+            }
+        }
 
-            try {
-                const file = fotoInput.files[0];
-                const storageRef = window.fb.ref(window.storage, 'muestras/' + Date.now() + '_' + file.name);
-                const snapshot = await window.fb.uploadBytes(storageRef, file);
-                const urlMuestra = await window.fb.getDownloadURL(snapshot.ref);
+        // FUNCIONALIDAD COTIZADOR
+        function addQuoteItem() {
+            const desc = document.getElementById('item-desc').value;
+            const qty = Number(document.getElementById('item-qty').value);
+            const price = Number(document.getElementById('item-price').value);
 
-                await window.fb.addDoc(window.fb.collection(window.db, `categorias/${categoriaSeleccionadaId}/muestras`), {
-                    url: urlMuestra,
-                    creadoEn: Date.now()
+            if (!desc || !qty || !price) {
+                alert("Por favor completa la descripción, cantidad y precio.");
+                return;
+            }
+
+            quoteItems.push({ desc, qty, price, subtotal: qty * price });
+            document.getElementById('item-desc').value = '';
+            document.getElementById('item-qty').value = '';
+            document.getElementById('item-price').value = '';
+            renderQuoteTable();
+        }
+
+        function quickAddQuote(name, price) {
+            quoteItems.push({ desc: name, qty: 1, price: price, subtotal: price });
+            switchTab('quote');
+            renderQuoteTable();
+        }
+
+        function removeQuoteItem(index) {
+            quoteItems.splice(index, 1);
+            renderQuoteTable();
+        }
+
+        function renderQuoteTable() {
+            const tbody = document.getElementById('quote-table-body');
+            tbody.innerHTML = '';
+            let total = 0;
+
+            if (quoteItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No hay ítems agregados a la cotización.</td></tr>`;
+            } else {
+                quoteItems.forEach((item, index) => {
+                    total += item.subtotal;
+                    tbody.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-2 border">${item.desc}</td>
+                            <td class="p-2 border text-center">${item.qty}</td>
+                            <td class="p-2 border text-right">$${item.price.toLocaleString('es-CO')}</td>
+                            <td class="p-2 border text-right font-semibold">$${item.subtotal.toLocaleString('es-CO')}</td>
+                            <td class="p-2 border text-center">
+                                <button onclick="removeQuoteItem(${index})" class="text-red-500 hover:text-red-700">
+                                    <i data-lucide="trash-2" class="w-4 h-4 inline"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                 });
-
-                alert("¡Muestra cargada!");
-                e.target.reset();
-            } catch (err) {
-                alert("Error al cargar la foto: " + err.message);
             }
-        });
 
-        // ACCIONES DE MODERACIÓN (CAMBIAR ESTADO, EDITAR Y BORRAR)
-        async function cambiarEstadoCat(id, estadoActual) {
-            const estados = ['normal', 'nuevo', 'promo', 'agotado'];
-            const sig = estados[(estados.indexOf(estadoActual) + 1) % estados.length];
-            await window.fb.setDoc(window.fb.doc(window.db, "categorias", id), { estado: sig }, { merge: true });
+            document.getElementById('quote-total-val').innerText = `$${total.toLocaleString('es-CO')} COP`;
+            lucide.createIcons();
         }
 
-        async function editarCategoria(id, nom, pre, des) {
-            const nuevoNom = prompt("Editar Nombre:", nom);
-            const nuevoPre = prompt("Editar Precio:", pre);
-            const nuevaDes = prompt("Editar Descripción:", des);
-            if(nuevoNom && nuevoPre) {
-                await window.fb.setDoc(window.fb.doc(window.db, "categorias", id), {
-                    nombre: nuevoNom, precio: nuevoPre, desc: nuevaDes
-                }, { merge: true });
-            }
+        // GENERAR PDF DE COTIZACIÓN
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const client = document.getElementById('quote-client').value || "Cliente";
+
+            doc.setFontSize(18);
+            doc.text("Reyand InduPro - Cotización", 14, 20);
+            doc.setFontSize(10);
+            doc.text(`Cliente: ${client}`, 14, 28);
+            doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 14, 34);
+
+            const tableData = quoteItems.map(i => [i.desc, i.qty, `$${i.price.toLocaleString('es-CO')}`, `$${i.subtotal.toLocaleString('es-CO')}`]);
+            const total = quoteItems.reduce((acc, i) => acc + i.subtotal, 0);
+
+            doc.autoTable({
+                startY: 40,
+                head: [['Descripción', 'Cant.', 'Precio Unit.', 'Subtotal']],
+                body: tableData,
+            });
+
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(12);
+            doc.text(`Total: $${total.toLocaleString('es-CO')} COP`, 14, finalY);
+
+            doc.save(`Cotizacion_Reyand_${client.replace(/\s+/g, '_')}.pdf`);
         }
 
-        async function eliminarCategoria(id) {
-            if(confirm("¿Seguro que deseas eliminar esta categoría?")) {
-                await window.fb.deleteDoc(window.fb.doc(window.db, "categorias", id));
-            }
+        // ENVIAR RESUMEN POR WHATSAPP
+        function sendQuoteWhatsApp() {
+            const client = document.getElementById('quote-client').value || "Cliente";
+            let msg = `*Cotización Reyand InduPro*\nCliente: ${client}\n\n`;
+            
+            let total = 0;
+            quoteItems.forEach(i => {
+                msg += `• ${i.desc} x${i.qty} - $${i.subtotal.toLocaleString('es-CO')}\n`;
+                total += i.subtotal;
+            });
+            
+            msg += `\n*Total: $${total.toLocaleString('es-CO')} COP*`;
+            const url = `https://wa.me/573000000000?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
         }
-
-        async function eliminarMuestra(catId, muestraId) {
-            if(confirm("¿Eliminar esta muestra?")) {
-                await window.fb.deleteDoc(window.fb.doc(window.db, `categorias/${catId}/muestras`, muestraId));
-            }
-        }
-
-        function abrirModalLogin() { document.getElementById('modal-login').style.display = "flex"; }
-        function cerrarModal(id) { document.getElementById(id).style.display = "none"; }
-
-        async function iniciarSesionModerador() {
-            const user = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            const emailFormateado = user.includes('@') ? user : `${user}@reyand.com`;
-            try {
-                await window.fb.signInWithEmailAndPassword(window.auth, emailFormateado, pass);
-                alert("¡Sesión de moderador activa!");
-                cerrarModal('modal-login');
-            } catch (err) {
-                alert("Error de credenciales. Verifica tu usuario y clave.");
-            }
-        }
-
-        async function cerrarSesionModerador() {
-            await window.fb.signOut(window.auth);
-            alert("Sesión cerrada.");
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            cargarDatosPagina();
-            setTimeout(() => {
-                window.fb.onAuthStateChanged(window.auth, (u) => {
-                    esModerador = !!u;
-                    const candado = document.getElementById('icono-candado');
-                    if (u) {
-                        document.body.classList.add('modo-moderador-activo');
-                        candado.className = "fa-solid fa-lock-open";
-                    } else {
-                        document.body.classList.remove('modo-moderador-activo');
-                        candado.className = "fa-solid fa-lock";
-                    }
-                });
-            }, 800);
-        });
     </script>
 </body>
 </html>
