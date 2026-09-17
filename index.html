@@ -271,7 +271,7 @@
                 <span id="form-titulo-modo"><i class="fa-solid fa-cloud-arrow-up"></i> Agregar o Editar Prenda en la Nube</span>
                 <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Salir</button>
             </h3>
-            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Sube fotos optimizadas automáticamente a WebP. Sube 1 foto a la vez para un rendimiento ultrarrápido.</p>
+            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Subida directa y limpia a la nube sin compresión pesada para preservar la calidad de tus fotografías.</p>
             
             <form id="form-agregar-producto" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                 <input type="hidden" id="edit-id-producto" value="">
@@ -412,43 +412,6 @@
             setTimeout(() => { toast.classList.remove('visible'); }, 3500);
         }
 
-        // FUNCION DE COMPRESIÓN A WEBP (Ancho máx 1200px, Calidad 0.75)
-        function comprimirImagenWebP(archivo, anchoMax = 1200, calidad = 0.75) {
-            return new Promise((resolve, reject) => {
-                const lector = new FileReader();
-                lector.readAsDataURL(archivo);
-                lector.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let ancho = img.width;
-                        let alto = img.height;
-
-                        if (ancho > anchoMax) {
-                            alto = Math.round((alto * anchoMax) / ancho);
-                            ancho = anchoMax;
-                        }
-
-                        canvas.width = ancho;
-                        canvas.height = alto;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, ancho, alto);
-
-                        canvas.toBlob((blob) => {
-                            if (blob) {
-                                resolve(blob);
-                            } else {
-                                reject(new Error('Error al comprimir la imagen.'));
-                            }
-                        }, 'image/webp', calidad);
-                    };
-                    img.onerror = (err) => reject(err);
-                };
-                lector.onerror = (err) => reject(err);
-            });
-        }
-
         function renderizarPagina() {
             const contenedorCat = document.getElementById('contenedor-catalogo-dinamico');
             const contenedorBord = document.getElementById('contenedor-bordados-dinamico');
@@ -583,7 +546,7 @@
             });
         }
 
-        // SUBIDA OPTIMIZADA CON PANTALLA DE CARGA Y WEBP
+        // SUBIDA DIRECTA Y LIMPIA A FIREBASE STORAGE
         document.getElementById('form-agregar-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -598,25 +561,23 @@
                 let urlPortada = productoExistente ? productoExistente.portada : "img/portada-estandar-1.jpg";
                 let arregloGaleria = productoExistente && productoExistente.fotosGaleria ? [...productoExistente.fotosGaleria] : [];
 
-                // 1. Subir y optimizar foto de Portada
+                // 1. Subida directa de la foto de Portada
                 if (portadaInput.files.length > 0) {
-                    mostrarCargando("Optimizando portada a WebP...");
-                    const blobPortada = await comprimirImagenWebP(portadaInput.files[0]);
-                    
-                    mostrarCargando("Subiendo portada a la nube...");
-                    const storageRef = window.fb.ref(window.storage, 'portadas/' + Date.now() + '.webp');
-                    const snapshot = await window.fb.uploadBytes(storageRef, blobPortada);
+                    mostrarCargando("Subiendo foto de portada a la nube...");
+                    const archivoPortada = portadaInput.files[0];
+                    const extension = archivoPortada.name.split('.').pop();
+                    const storageRef = window.fb.ref(window.storage, 'portadas/' + Date.now() + '.' + extension);
+                    const snapshot = await window.fb.uploadBytes(storageRef, archivoPortada);
                     urlPortada = await window.fb.getDownloadURL(snapshot.ref);
                 }
 
-                // 2. Subir y optimizar foto de Galería (1 archivo)
+                // 2. Subida directa de la foto de Galería
                 if (galeriaInput.files.length > 0) {
-                    mostrarCargando("Optimizando foto de muestra...");
-                    const blobGaleria = await comprimirImagenWebP(galeriaInput.files[0]);
-
-                    mostrarCargando("Subiendo foto de muestra...");
-                    const storageRef = window.fb.ref(window.storage, 'galerias/' + Date.now() + '.webp');
-                    const snapshot = await window.fb.uploadBytes(storageRef, blobGaleria);
+                    mostrarCargando("Subiendo foto de muestra a la nube...");
+                    const archivoGaleria = galeriaInput.files[0];
+                    const extension = archivoGaleria.name.split('.').pop();
+                    const storageRef = window.fb.ref(window.storage, 'galerias/' + Date.now() + '.' + extension);
+                    const snapshot = await window.fb.uploadBytes(storageRef, archivoGaleria);
                     const url = await window.fb.getDownloadURL(snapshot.ref);
                     arregloGaleria.push(url);
                 }
@@ -625,7 +586,7 @@
                     arregloGaleria.push(urlPortada);
                 }
 
-                mostrarCargando("Guardando cambios finales...");
+                mostrarCargando("Guardando datos en la base de datos...");
                 const datosPrenda = {
                     nombre: document.getElementById('add-nombre').value,
                     precio: document.getElementById('add-precio').value,
@@ -650,7 +611,7 @@
                 ocultarCargando();
             } catch (err) {
                 ocultarCargando();
-                alert("Error al procesar o subir la imagen: " + err.message);
+                alert("Error al guardar en la nube: " + err.message);
             }
         });
 
