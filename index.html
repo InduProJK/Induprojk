@@ -271,7 +271,7 @@
                 <span id="form-titulo-modo"><i class="fa-solid fa-cloud-arrow-up"></i> Agregar o Editar Prenda en la Nube</span>
                 <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Salir</button>
             </h3>
-            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Subida directa y limpia a la nube sin compresión pesada para preservar la calidad de tus fotografías.</p>
+            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Subida directa a la nube sin sobrecargar el procesador del celular.</p>
             
             <form id="form-agregar-producto" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                 <input type="hidden" id="edit-id-producto" value="">
@@ -546,7 +546,7 @@
             });
         }
 
-        // SUBIDA DIRECTA Y LIMPIA A FIREBASE STORAGE
+        // SUBIDA DIRECTA LIMPIA A FIREBASE STORAGE
         document.getElementById('form-agregar-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
             
