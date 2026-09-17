@@ -11,7 +11,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyB54k-MuLoqtkI7CSVt1UsHvPt5XY_rI5s",
@@ -26,12 +25,10 @@
         const app = initializeApp(firebaseConfig);
         window.auth = getAuth(app);
         window.db = getFirestore(app);
-        window.storage = getStorage(app);
         
         window.fb = {
             signInWithEmailAndPassword, signOut, onAuthStateChanged,
-            collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy,
-            ref, uploadBytes, getDownloadURL
+            collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy
         };
     </script>
     <style>
@@ -271,7 +268,7 @@
                 <span id="form-titulo-modo"><i class="fa-solid fa-cloud-arrow-up"></i> Agregar o Editar Prenda en la Nube</span>
                 <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Salir</button>
             </h3>
-            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Subida directa a la nube sin sobrecargar el procesador del celular.</p>
+            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 12px;">Sube tus imágenes a <a href="https://imgbb.com" target="_blank" style="color: var(--neon-azul); font-weight: bold;">ImgBB.com</a> para obtener enlaces HD al instante y pégalos abajo:</p>
             
             <form id="form-agregar-producto" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                 <input type="hidden" id="edit-id-producto" value="">
@@ -292,19 +289,12 @@
                     <option value="agotado">Agotado</option>
                 </select>
 
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 0.75rem; color: var(--neon-azul);">Foto de Portada (Principal):</label>
-                    <input type="file" id="add-archivo-portada" accept="image/*" class="campo-input" style="margin: 0; padding: 8px;">
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 0.75rem; color: var(--neon-azul);">Galería / Muestras (1 foto por subida):</label>
-                    <input type="file" id="add-archivos-galeria" accept="image/*" class="campo-input" style="margin: 0; padding: 8px;">
-                </div>
+                <input type="url" id="add-url-portada" placeholder="Enlace de la Foto de Portada (https://...)" class="campo-input" required style="margin: 0; grid-column: 1 / -1;">
+                <input type="url" id="add-url-galeria" placeholder="Enlace de la Foto de Galería / Muestra (Opcional)" class="campo-input" style="margin: 0; grid-column: 1 / -1;">
 
                 <div style="grid-column: 1 / -1; display: flex; gap: 10px;">
                     <button type="submit" class="btn-entrar" id="btn-guardar-main" style="background: var(--neon-azul); color: black; margin: 0; flex: 1;">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar y Sincronizar en la Nube
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar y Publicar al Instante
                     </button>
                     <button type="button" id="btn-cancelar-edicion" onclick="limpiarFormularioEdicion()" style="display: none; background: var(--texto-gris); color: black; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">
                         Cancelar Edición
@@ -546,47 +536,28 @@
             });
         }
 
-        // SUBIDA DIRECTA LIMPIA A FIREBASE STORAGE
+        // GUARDAR DATOS Y ENLACES EN FIRESTORE
         document.getElementById('form-agregar-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const idEdit = document.getElementById('edit-id-producto').value;
-            const portadaInput = document.getElementById('add-archivo-portada');
-            const galeriaInput = document.getElementById('add-archivos-galeria');
+            const urlPortada = document.getElementById('add-url-portada').value.trim();
+            const urlGaleria = document.getElementById('add-url-galeria').value.trim();
 
             mostrarCargando(idEdit ? "Actualizando producto en la nube..." : "Guardando producto...");
 
             try {
                 let productoExistente = idEdit ? prendasNube.find(p => p.id === idEdit) : null;
-                let urlPortada = productoExistente ? productoExistente.portada : "img/portada-estandar-1.jpg";
                 let arregloGaleria = productoExistente && productoExistente.fotosGaleria ? [...productoExistente.fotosGaleria] : [];
 
-                // 1. Subida directa de la foto de Portada
-                if (portadaInput.files.length > 0) {
-                    mostrarCargando("Subiendo foto de portada a la nube...");
-                    const archivoPortada = portadaInput.files[0];
-                    const extension = archivoPortada.name.split('.').pop();
-                    const storageRef = window.fb.ref(window.storage, 'portadas/' + Date.now() + '.' + extension);
-                    const snapshot = await window.fb.uploadBytes(storageRef, archivoPortada);
-                    urlPortada = await window.fb.getDownloadURL(snapshot.ref);
-                }
-
-                // 2. Subida directa de la foto de Galería
-                if (galeriaInput.files.length > 0) {
-                    mostrarCargando("Subiendo foto de muestra a la nube...");
-                    const archivoGaleria = galeriaInput.files[0];
-                    const extension = archivoGaleria.name.split('.').pop();
-                    const storageRef = window.fb.ref(window.storage, 'galerias/' + Date.now() + '.' + extension);
-                    const snapshot = await window.fb.uploadBytes(storageRef, archivoGaleria);
-                    const url = await window.fb.getDownloadURL(snapshot.ref);
-                    arregloGaleria.push(url);
+                if (urlGaleria && !arregloGaleria.includes(urlGaleria)) {
+                    arregloGaleria.push(urlGaleria);
                 }
 
                 if(arregloGaleria.length === 0) {
                     arregloGaleria.push(urlPortada);
                 }
 
-                mostrarCargando("Guardando datos en la base de datos...");
                 const datosPrenda = {
                     nombre: document.getElementById('add-nombre').value,
                     precio: document.getElementById('add-precio').value,
@@ -625,6 +596,7 @@
                 document.getElementById('add-desc').value = prenda.desc || '';
                 document.getElementById('add-categoria').value = prenda.categoria || 'catalogo';
                 document.getElementById('add-estado').value = prenda.estado || 'normal';
+                document.getElementById('add-url-portada').value = prenda.portada || '';
 
                 document.getElementById('form-titulo-modo').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Editando: ${prenda.nombre}`;
                 document.getElementById('btn-guardar-main').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios`;
@@ -639,7 +611,7 @@
             document.getElementById('form-agregar-producto').reset();
             document.getElementById('edit-id-producto').value = "";
             document.getElementById('form-titulo-modo').innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Agregar o Editar Prenda en la Nube`;
-            document.getElementById('btn-guardar-main').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar y Sincronizar en la Nube`;
+            document.getElementById('btn-guardar-main').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar y Publicar al Instante`;
             document.getElementById('btn-cancelar-edicion').style.display = "none";
         }
 
