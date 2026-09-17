@@ -271,7 +271,7 @@
                 <span id="form-titulo-modo"><i class="fa-solid fa-cloud-arrow-up"></i> Agregar o Editar Prenda en la Nube</span>
                 <button onclick="cerrarSesionModerador()" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Salir</button>
             </h3>
-            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Sube fotos desde tu dispositivo. Puedes agregar foto de portada y múltiples fotos a la galería de muestras.</p>
+            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 15px;">Sube fotos optimizadas automáticamente a WebP. Sube 1 foto a la vez para un rendimiento ultrarrápido.</p>
             
             <form id="form-agregar-producto" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                 <input type="hidden" id="edit-id-producto" value="">
@@ -298,8 +298,8 @@
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 0.75rem; color: var(--neon-azul);">Galería / Muestras (Múltiples fotos):</label>
-                    <input type="file" id="add-archivos-galeria" accept="image/*" multiple class="campo-input" style="margin: 0; padding: 8px;">
+                    <label style="font-size: 0.75rem; color: var(--neon-azul);">Galería / Muestras (1 foto por subida):</label>
+                    <input type="file" id="add-archivos-galeria" accept="image/*" class="campo-input" style="margin: 0; padding: 8px;">
                 </div>
 
                 <div style="grid-column: 1 / -1; display: flex; gap: 10px;">
@@ -410,6 +410,43 @@
             document.getElementById('toast-mensaje').innerText = mensaje;
             toast.classList.add('visible');
             setTimeout(() => { toast.classList.remove('visible'); }, 3500);
+        }
+
+        // FUNCION DE COMPRESIÓN A WEBP (Ancho máx 1200px, Calidad 0.75)
+        function comprimirImagenWebP(archivo, anchoMax = 1200, calidad = 0.75) {
+            return new Promise((resolve, reject) => {
+                const lector = new FileReader();
+                lector.readAsDataURL(archivo);
+                lector.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let ancho = img.width;
+                        let alto = img.height;
+
+                        if (ancho > anchoMax) {
+                            alto = Math.round((alto * anchoMax) / ancho);
+                            ancho = anchoMax;
+                        }
+
+                        canvas.width = ancho;
+                        canvas.height = alto;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, ancho, alto);
+
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                resolve(blob);
+                            } else {
+                                reject(new Error('Error al comprimir la imagen.'));
+                            }
+                        }, 'image/webp', calidad);
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                lector.onerror = (err) => reject(err);
+            });
         }
 
         function renderizarPagina() {
@@ -546,7 +583,7 @@
             });
         }
 
-        // CREAR O EDITAR PRENDA EN LA NUBE
+        // SUBIDA OPTIMIZADA CON PANTALLA DE CARGA Y WEBP
         document.getElementById('form-agregar-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -554,37 +591,41 @@
             const portadaInput = document.getElementById('add-archivo-portada');
             const galeriaInput = document.getElementById('add-archivos-galeria');
 
-            mostrarCargando(idEdit ? "Actualizando producto en la nube..." : "Guardando nuevo producto...");
+            mostrarCargando(idEdit ? "Actualizando producto en la nube..." : "Guardando producto...");
 
             try {
                 let productoExistente = idEdit ? prendasNube.find(p => p.id === idEdit) : null;
                 let urlPortada = productoExistente ? productoExistente.portada : "img/portada-estandar-1.jpg";
                 let arregloGaleria = productoExistente && productoExistente.fotosGaleria ? [...productoExistente.fotosGaleria] : [];
 
-                // 1. Subir nueva portada si se seleccionó una
+                // 1. Subir y optimizar foto de Portada
                 if (portadaInput.files.length > 0) {
-                    const filePortada = portadaInput.files[0];
-                    const storageRef = window.fb.ref(window.storage, 'portadas/' + Date.now() + '_' + filePortada.name);
-                    const snapshot = await window.fb.uploadBytes(storageRef, filePortada);
+                    mostrarCargando("Optimizando portada a WebP...");
+                    const blobPortada = await comprimirImagenWebP(portadaInput.files[0]);
+                    
+                    mostrarCargando("Subiendo portada a la nube...");
+                    const storageRef = window.fb.ref(window.storage, 'portadas/' + Date.now() + '.webp');
+                    const snapshot = await window.fb.uploadBytes(storageRef, blobPortada);
                     urlPortada = await window.fb.getDownloadURL(snapshot.ref);
                 }
 
-                // 2. Subir nuevas fotos a la galería si se seleccionaron
+                // 2. Subir y optimizar foto de Galería (1 archivo)
                 if (galeriaInput.files.length > 0) {
-                    for (let i = 0; i < galeriaInput.files.length; i++) {
-                        const file = galeriaInput.files[i];
-                        const storageRef = window.fb.ref(window.storage, 'galerias/' + Date.now() + '_' + i + '_' + file.name);
-                        const snapshot = await window.fb.uploadBytes(storageRef, file);
-                        const url = await window.fb.getDownloadURL(snapshot.ref);
-                        arregloGaleria.push(url);
-                    }
+                    mostrarCargando("Optimizando foto de muestra...");
+                    const blobGaleria = await comprimirImagenWebP(galeriaInput.files[0]);
+
+                    mostrarCargando("Subiendo foto de muestra...");
+                    const storageRef = window.fb.ref(window.storage, 'galerias/' + Date.now() + '.webp');
+                    const snapshot = await window.fb.uploadBytes(storageRef, blobGaleria);
+                    const url = await window.fb.getDownloadURL(snapshot.ref);
+                    arregloGaleria.push(url);
                 }
 
-                // Si no hay fotos en galería, usamos al menos la portada
                 if(arregloGaleria.length === 0) {
                     arregloGaleria.push(urlPortada);
                 }
 
+                mostrarCargando("Guardando cambios finales...");
                 const datosPrenda = {
                     nombre: document.getElementById('add-nombre').value,
                     precio: document.getElementById('add-precio').value,
@@ -597,41 +638,40 @@
                 };
 
                 if (idEdit) {
-                    // Editar existente
                     await window.fb.updateDoc(window.fb.doc(window.db, "productos", idEdit), datosPrenda);
                     mostrarNotificacion("¡Producto actualizado con éxito!");
                 } else {
-                    // Crear nuevo
                     datosPrenda.creadoEn = Date.now();
                     await window.fb.addDoc(window.fb.collection(window.db, "productos"), datosPrenda);
-                    mostrarNotificacion("¡Producto creado con éxito!");
+                    mostrarNotificacion("¡Producto guardado con éxito!");
                 }
 
                 limpiarFormularioEdicion();
                 ocultarCargando();
             } catch (err) {
                 ocultarCargando();
-                alert("Error al guardar: " + err.message);
+                alert("Error al procesar o subir la imagen: " + err.message);
             }
         });
 
-        // PRECARGAR DATOS EN FORMULARIO PARA EDITAR
         function cargarPrendaParaEditar(id) {
+            mostrarCargando("Cargando datos para edición...");
             const prenda = prendasNube.find(p => p.id === id);
-            if(!prenda) return;
+            if(prenda) {
+                document.getElementById('edit-id-producto').value = prenda.id;
+                document.getElementById('add-nombre').value = prenda.nombre;
+                document.getElementById('add-precio').value = prenda.precio;
+                document.getElementById('add-desc').value = prenda.desc || '';
+                document.getElementById('add-categoria').value = prenda.categoria || 'catalogo';
+                document.getElementById('add-estado').value = prenda.estado || 'normal';
 
-            document.getElementById('edit-id-producto').value = prenda.id;
-            document.getElementById('add-nombre').value = prenda.nombre;
-            document.getElementById('add-precio').value = prenda.precio;
-            document.getElementById('add-desc').value = prenda.desc || '';
-            document.getElementById('add-categoria').value = prenda.categoria || 'catalogo';
-            document.getElementById('add-estado').value = prenda.estado || 'normal';
+                document.getElementById('form-titulo-modo').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Editando: ${prenda.nombre}`;
+                document.getElementById('btn-guardar-main').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios`;
+                document.getElementById('btn-cancelar-edicion').style.display = "block";
 
-            document.getElementById('form-titulo-modo').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Editando: ${prenda.nombre}`;
-            document.getElementById('btn-guardar-main').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios`;
-            document.getElementById('btn-cancelar-edicion').style.display = "block";
-
-            window.scrollTo({top: 0, behavior: 'smooth'});
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+            ocultarCargando();
         }
 
         function limpiarFormularioEdicion() {
@@ -642,9 +682,8 @@
             document.getElementById('btn-cancelar-edicion').style.display = "none";
         }
 
-        // ELIMINAR FOTO ESPECÍFICA DE LA GALERÍA
         async function eliminarFotoEspecificaGaleria(idPrenda, indiceFoto) {
-            if(!confirm("¿Deseas eliminar esta foto de la galería del producto?")) return;
+            if(!confirm("¿Deseas eliminar esta foto de la galería?")) return;
             try {
                 mostrarCargando("Eliminando foto de la galería...");
                 const prenda = prendasNube.find(p => p.id === idPrenda);
@@ -655,7 +694,7 @@
                     });
                     ocultarCargando();
                     mostrarNotificacion("Foto eliminada correctamente");
-                    abrirGaleria(idPrenda); // Refrescar modal de galería
+                    abrirGaleria(idPrenda);
                 }
             } catch (err) {
                 ocultarCargando();
@@ -663,9 +702,8 @@
             }
         }
 
-        // ELIMINAR PRENDA DE LA NUBE
         async function eliminarPrendaNube(id) {
-            if(confirm("¿Seguro que deseas eliminar esta prenda definitivamente de la nube?")) {
+            if(confirm("¿Seguro que deseas eliminar esta prenda definitivamente?")) {
                 try {
                     mostrarCargando("Eliminando prenda de la nube...");
                     await window.fb.deleteDoc(window.fb.doc(window.db, "productos", id));
@@ -678,13 +716,12 @@
             }
         }
 
-        // CAMBIAR ESTADO DE PRENDA
         async function cambiarEstadoPrenda(id, estadoActual, esDeNube) {
             const estados = ['normal', 'nuevo', 'promo', 'agotado'];
             const siguienteEstado = estados[(estados.indexOf(estadoActual) + 1) % estados.length];
             if(esDeNube) {
                 try {
-                    mostrarCargando("Actualizando estado...");
+                    mostrarCargando(`Cambiando estado a ${siguienteEstado.toUpperCase()}...`);
                     await window.fb.updateDoc(window.fb.doc(window.db, "productos", id), {
                         estado: siguienteEstado
                     });
