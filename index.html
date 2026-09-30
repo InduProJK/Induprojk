@@ -121,6 +121,15 @@
         }
         .btn-galeria:hover { background: white; box-shadow: 0 0 12px white; }
 
+        /* ESTILOS DE LA SECCIÓN DE VIDEOS */
+        .tarjeta-video {
+            background: var(--bg-tarjeta); border-radius: 14px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; transition: 0.3s;
+        }
+        .tarjeta-video:hover { border-color: var(--neon-rosado); box-shadow: 0 5px 25px rgba(255,100,180,0.2); }
+        .video-contenedor { width: 100%; background: #000; position: relative; overflow: hidden; }
+        .video-contenedor video { width: 100%; height: auto; max-height: 480px; display: block; object-fit: contain; }
+
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); z-index: 300; justify-content: center; align-items: center; padding: 20px;
@@ -175,6 +184,7 @@
     <nav>
         <button class="nav-btn activo" onclick="cambiarPestaña('inicio', this)">Inicio</button>
         <button class="nav-btn" onclick="cambiarPestaña('catalogo', this)">Ver Catálogo</button>
+        <button class="nav-btn" onclick="cambiarPestaña('videos', this)"><i class="fa-solid fa-circle-play" style="color:var(--neon-rosado);"></i> Videos / Promos</button>
         <button class="nav-btn" onclick="cambiarPestaña('bordados', this)">Bordados</button>
         <button class="nav-btn" onclick="cambiarPestaña('pagos', this)">Medios de Pago</button>
     </nav>
@@ -188,6 +198,7 @@
     </div>
 
     <div class="container">
+        <!-- PANTALLAS -->
         <div id="pantalla-inicio" class="seccion-pantalla activa">
             <div class="bienvenida-box">
                 <h2>Exhibición Oficial de Muestras y Confección</h2>
@@ -196,8 +207,8 @@
                     <button class="btn-galeria" style="max-width: 250px;" onclick="cambiarPestaña('catalogo', document.querySelectorAll('nav .nav-btn')[1])">
                         <i class="fa-solid fa-folder-open"></i> Explorar Catálogo
                     </button>
-                    <button class="btn-galeria" style="max-width: 250px; background:var(--neon-morado); color:white;" onclick="cambiarPestaña('bordados', document.querySelectorAll('nav .nav-btn')[2])">
-                        <i class="fa-solid fa-file-pen"></i> Ver Bordados
+                    <button class="btn-galeria" style="max-width: 250px; background:var(--neon-rosado); color:white;" onclick="cambiarPestaña('videos', document.querySelectorAll('nav .nav-btn')[2])">
+                        <i class="fa-solid fa-play"></i> Ver Videos / Promos
                     </button>
                 </div>
             </div>
@@ -205,6 +216,15 @@
 
         <div id="pantalla-catalogo" class="seccion-pantalla">
             <div id="contenedor-catalogo-dinamico" class="grid-portadas"></div>
+        </div>
+
+        <!-- NUEVA PANTALLA VIDEOS / PROMOS -->
+        <div id="pantalla-videos" class="seccion-pantalla">
+            <div class="bienvenida-box" style="border-color: var(--neon-rosado);">
+                <h2 style="color: var(--neon-rosado);"><i class="fa-solid fa-film"></i> Videos de Confección y Promociones</h2>
+                <p>Observa en video la calidad de nuestras telas, pruebas de resistencia, acabados en taller y demostraciones en vivo.</p>
+            </div>
+            <div id="contenedor-videos-dinamico" class="grid-portadas"></div>
         </div>
 
         <div id="pantalla-bordados" class="seccion-pantalla">
@@ -224,6 +244,7 @@
         </div>
     </div>
 
+    <!-- MODAL GALERÍA -->
     <div id="modal-galeria" class="modal-overlay">
         <div class="caja-modal">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px;">
@@ -243,13 +264,33 @@
     </footer>
         <script>
         const lineasBase = [
-            { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reforzada a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
-            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reforzada a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
+            { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reinforced a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
+            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reinforced a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
             { id: 'exclusiva', categoria: 'catalogo', nombre: 'PRO Exclusivas', precio: 'A Convenir', portada: 'img/portada-exclusiva-1.jpg', estado: 'nuevo', desc: 'Diseños de gran formato con cortes combinados únicos.', prefijo: 'img/chaqueta-exclusiva-', extension: '.jpg', totalMuestras: 14 },
             { id: 'dama', categoria: 'catalogo', nombre: 'Premium Dama', precio: '$95.000', portada: 'img/portada-dama-1.jpg', estado: 'normal', desc: 'Confección con horma femenina estilizada.', prefijo: 'img/chaqueta-dama-', extension: '.jpg', totalMuestras: 10 },
             { id: 'capuchon-drill', categoria: 'catalogo', nombre: 'Capuchón de Drill', precio: 'Unidad: $16.000', portada: 'img/portada-capuchon-drill.jpg', estado: 'normal', desc: 'Protección industrial superior en tela Drill.', prefijo: 'img/capuchon-drill-', extension: '.jpg', totalMuestras: 26 },
             { id: 'capuchon-dracon', categoria: 'catalogo', nombre: 'Capuchón de Dacrón', precio: 'Unidad: $12.000', portada: 'img/portada-capuchon-dracon.jpg', estado: 'normal', desc: 'Diseño fresco y ligero para largas jornadas.', prefijo: 'img/capuchon-dracon-', extension: '.jpg', totalMuestras: 46 },
             { id: 'bordados-base', categoria: 'bordados', nombre: 'Muestras de Bordados', precio: 'Personalizado', portada: 'img/portada-bordados-1.jpg', estado: 'normal', desc: 'Logotipos de alta definición, nombres y banderas.', prefijo: 'img/bordados-', extension: '.jpg', totalMuestras: 20 }
+        ];
+
+        // LISTA DE VIDEOS PROMOCIONALES Y DEMOSTRACIONES
+        const listaVideos = [
+            {
+                id: 'vid-1',
+                titulo: 'Prueba de Resistencia de Costura',
+                desc: 'Observa la resistencia a 3 hilos en nuestras prendas industriales.',
+                archivo: 'videos/promo1.mp4',
+                etiqueta: 'Taller',
+                colorEtiqueta: 'var(--neon-azul)'
+            },
+            {
+                id: 'vid-2',
+                titulo: 'Personalización y Bordados en Vivo',
+                desc: 'Bordados computarizados de alta definición sobre prendas de dotación.',
+                archivo: 'videos/promo2.mp4',
+                etiqueta: 'Bordados',
+                colorEtiqueta: 'var(--neon-morado)'
+            }
         ];
 
         function cambiarPestaña(nombrePestaña, boton) {
@@ -274,12 +315,15 @@
         function renderizarPagina() {
             const contenedorCat = document.getElementById('contenedor-catalogo-dinamico');
             const contenedorBord = document.getElementById('contenedor-bordados-dinamico');
+            const contenedorVid = document.getElementById('contenedor-videos-dinamico');
             
-            if(!contenedorCat || !contenedorBord) return;
+            if(!contenedorCat || !contenedorBord || !contenedorVid) return;
 
             contenedorCat.innerHTML = "";
             contenedorBord.innerHTML = "";
+            contenedorVid.innerHTML = "";
 
+            // Cargar Catálogo y Bordados
             lineasBase.forEach(p => {
                 let badgeEstado = "";
                 if (p.estado === 'promo') badgeEstado = `<span class="badge-estado promo">En Promo</span>`;
@@ -310,6 +354,31 @@
                 } else {
                     contenedorCat.innerHTML += htmlTarjeta;
                 }
+            });
+
+            // Cargar Videos
+            listaVideos.forEach(v => {
+                const mensajeWa = encodeURIComponent(`*Hola Reyand InduPro!* Vi el video "*${v.titulo}*" y me gustaría cotizar este tipo de prendas.`);
+                
+                const htmlVideo = `
+                    <div class="tarjeta-video">
+                        <div class="video-contenedor">
+                            <video controls preload="metadata" poster="img/logo-induprojk.jpg">
+                                <source src="${v.archivo}" type="video/mp4">
+                                Tu navegador no soporta reproducción de video.
+                            </video>
+                        </div>
+                        <div class="info-portada">
+                            <span class="badge-estado" style="background:${v.colorEtiqueta}; color:#000; position:relative; top:0; left:0; display:inline-block; margin-bottom:8px; width:fit-content;">${v.etiqueta}</span>
+                            <h3>${v.titulo}</h3>
+                            <p>${v.desc}</p>
+                            <a href="https://api.whatsapp.com/send?phone=573184250115&text=${mensajeWa}" target="_blank" class="btn-cotizar-muestra" style="border-radius:6px; margin-top:10px;">
+                                <i class="fa-brands fa-whatsapp"></i> Cotizar Prenda del Video
+                            </a>
+                        </div>
+                    </div>
+                `;
+                contenedorVid.innerHTML += htmlVideo;
             });
         }
 
