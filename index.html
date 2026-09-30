@@ -101,7 +101,7 @@
             font-size: 0.75rem; font-weight: bold; text-transform: uppercase; z-index: 10;
         }
         .badge-estado.promo { background: var(--neon-alerta); color: #000; }
-        .badge-estado.agotado { background: var(--rojo-eliminar); color: #fff; }
+        .badge-estado.agotado { background: var(--neon-morado); color: #fff; }
         .badge-estado.nuevo { background: var(--neon-verde); color: #000; }
 
         .badge-precio {
@@ -130,9 +130,9 @@
         .video-contenedor { width: 100%; background: #000; position: relative; overflow: hidden; }
         .video-contenedor video { width: 100%; height: auto; max-height: 480px; display: block; object-fit: contain; }
 
-        /* GLOBO FLOTANTE VIDEOS */
+        /* GLOBO FLOTANTE VIDEOS (UBICADO MÁS ARRIBA) */
         .globo-videos-flotante {
-            position: fixed; bottom: 25px; left: 20px;
+            position: fixed; bottom: 85px; left: 20px;
             background: linear-gradient(135deg, #0b0f14 0%, #020406 100%);
             border: 2px solid var(--neon-rosado); color: white;
             padding: 10px 18px; border-radius: 50px; font-size: 0.9rem; font-weight: bold;
@@ -300,16 +300,110 @@
         <p>© Reyand InduPro - Confección Industrial y Dotaciones</p>
     </footer>
         <script>
-        // NUEVO ORDEN DE LÍNEAS DEL CATÁLOGO
+        // CONFIGURACIÓN DE LÍNEAS CON ETIQUETAS DESTACADAS Y NUEVOS PRECIOS
         const lineasBase = [
-            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reforzada a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
-            { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reforzada a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
-            { id: 'dama', categoria: 'catalogo', nombre: 'Premium Dama', precio: '$95.000', portada: 'img/portada-dama-1.jpg', estado: 'normal', desc: 'Confección con horma femenina estilizada.', prefijo: 'img/chaqueta-dama-', extension: '.jpg', totalMuestras: 10 },
-            { id: 'exclusiva', categoria: 'catalogo', nombre: 'PRO Exclusivas', precio: 'A Convenir', portada: 'img/portada-exclusiva-1.jpg', estado: 'normal', desc: 'Diseños de gran formato con cortes combinados únicos.', prefijo: 'img/chaqueta-exclusiva-', extension: '.jpg', totalMuestras: 14 },
-            { id: 'capuchon-personalizado', categoria: 'catalogo', nombre: 'Capuchón Drill Personalizado', precio: 'A Convenir', portada: 'img/portada-cpersonalizado-1.jpg', estado: 'nuevo', desc: 'Capuchones de Drill con diseños y logotipos personalizados.', prefijo: 'img/Cpersonalizado-', extension: '.jpg', totalMuestras: 8 },
-            { id: 'capuchon-drill', categoria: 'catalogo', nombre: 'Capuchón de Drill', precio: 'Unidad: $16.000', portada: 'img/portada-capuchon-drill.jpg', estado: 'normal', desc: 'Protección industrial superior en tela Drill.', prefijo: 'img/capuchon-drill-', extension: '.jpg', totalMuestras: 26 },
-            { id: 'capuchon-dracon', categoria: 'catalogo', nombre: 'Capuchón de Dacrón', precio: 'Unidad: $12.000', portada: 'img/portada-capuchon-dracon.jpg', estado: 'normal', desc: 'Diseño fresco y ligero para largas jornadas.', prefijo: 'img/capuchon-dracon-', extension: '.jpg', totalMuestras: 46 },
-            { id: 'bordados-base', categoria: 'bordados', nombre: 'Muestras de Bordados', precio: 'Personalizado', portada: 'img/portada-bordados-1.jpg', estado: 'normal', desc: 'Logotipos de alta definición, nombres y banderas.', prefijo: 'img/bordados-', extension: '.jpg', totalMuestras: 20 }
+            { 
+                id: 'premium', 
+                categoria: 'catalogo', 
+                nombre: 'Camisa Premium', 
+                precio: 'Base: $95.000', 
+                portada: 'img/portada-premium-1.jpg', 
+                estado: 'promo', 
+                textoEstado: 'MÁS VENDIDA 🔥',
+                desc: 'Confección reforzada a 3 hilos con 3 broches.', 
+                prefijo: 'img/chaqueta-premium-', 
+                extension: '.jpg', 
+                totalMuestras: 42 
+            },
+            { 
+                id: 'estandar', 
+                categoria: 'catalogo', 
+                nombre: 'Camisa Estándar', 
+                precio: 'Base: $85.000', 
+                portada: 'img/portada-estandar-1.jpg', 
+                estado: 'normal', 
+                desc: 'Confección reforzada a 2 hilos con 2 broches.', 
+                prefijo: 'img/chaqueta-estandar-', 
+                extension: '.jpg', 
+                totalMuestras: 28 
+            },
+            { 
+                id: 'dama', 
+                categoria: 'catalogo', 
+                nombre: 'Premium Dama', 
+                precio: '$95.000', 
+                portada: 'img/portada-dama-1.jpg', 
+                estado: 'nuevo', 
+                textoEstado: 'MUY PEDIDA ⭐',
+                desc: 'Confección con horma femenina estilizada.', 
+                prefijo: 'img/chaqueta-dama-', 
+                extension: '.jpg', 
+                totalMuestras: 10 
+            },
+            { 
+                id: 'exclusiva', 
+                categoria: 'catalogo', 
+                nombre: 'PRO Exclusivas', 
+                precio: 'A Convenir', 
+                portada: 'img/portada-exclusiva-1.jpg', 
+                estado: 'agotado', 
+                textoEstado: 'EDICIÓN LIMITADA 💎',
+                desc: 'Diseños de gran formato con cortes combinados únicos.', 
+                prefijo: 'img/chaqueta-exclusiva-', 
+                extension: '.jpg', 
+                totalMuestras: 14 
+            },
+            { 
+                id: 'capuchon-personalizado', 
+                categoria: 'catalogo', 
+                nombre: 'Capuchón Drill Personalizado', 
+                precio: 'Unidad: $22.000', 
+                portada: 'img/portada-cpersonalizado-1.jpg', 
+                estado: 'nuevo', 
+                textoEstado: 'NUEVO ✨',
+                desc: 'Capuchones de Drill con diseños y logotipos personalizados.', 
+                prefijo: 'img/Cpersonalizado-', 
+                extension: '.jpg', 
+                totalMuestras: 8 
+            },
+            { 
+                id: 'capuchon-drill', 
+                categoria: 'catalogo', 
+                nombre: 'Capuchón de Drill', 
+                precio: 'Unidad: $16.000', 
+                portada: 'img/portada-capuchon-drill.jpg', 
+                estado: 'promo', 
+                textoEstado: 'ALTA DEMANDA ⚡',
+                desc: 'Protección industrial superior en tela Drill.', 
+                prefijo: 'img/capuchon-drill-', 
+                extension: '.jpg', 
+                totalMuestras: 26 
+            },
+            { 
+                id: 'capuchon-dracon', 
+                categoria: 'catalogo', 
+                nombre: 'Capuchón de Dacrón', 
+                precio: 'Unidad: $12.000', 
+                portada: 'img/portada-capuchon-dracon.jpg', 
+                estado: 'promo', 
+                textoEstado: 'POPULAR 👍',
+                desc: 'Diseño fresco y ligero para largas jornadas.', 
+                prefijo: 'img/capuchon-dracon-', 
+                extension: '.jpg', 
+                totalMuestras: 46 
+            },
+            { 
+                id: 'bordados-base', 
+                categoria: 'bordados', 
+                nombre: 'Muestras de Bordados', 
+                precio: 'Personalizado', 
+                portada: 'img/portada-bordados-1.jpg', 
+                estado: 'normal', 
+                desc: 'Logotipos de alta definición, nombres y banderas.', 
+                prefijo: 'img/bordados-', 
+                extension: '.jpg', 
+                totalMuestras: 20 
+            }
         ];
 
         // CONFIGURACIÓN DE LOS 6 VIDEOS PROMOCIONALES
@@ -401,9 +495,11 @@
 
             lineasBase.forEach(p => {
                 let badgeEstado = "";
-                if (p.estado === 'promo') badgeEstado = `<span class="badge-estado promo">En Promo</span>`;
-                if (p.estado === 'agotado') badgeEstado = `<span class="badge-estado agotado">Agotado</span>`;
-                if (p.estado === 'nuevo') badgeEstado = `<span class="badge-estado nuevo">Nuevo</span>`;
+                const textoMostrar = p.textoEstado || (p.estado === 'promo' ? 'En Promo' : (p.estado === 'nuevo' ? 'Nuevo' : 'Agotado'));
+                
+                if (p.estado === 'promo') badgeEstado = `<span class="badge-estado promo">${textoMostrar}</span>`;
+                if (p.estado === 'agotado') badgeEstado = `<span class="badge-estado agotado">${textoMostrar}</span>`;
+                if (p.estado === 'nuevo') badgeEstado = `<span class="badge-estado nuevo">${textoMostrar}</span>`;
 
                 const cantidadFotos = p.totalMuestras || 1;
 
