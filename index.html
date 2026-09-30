@@ -290,7 +290,7 @@
             { id: 'bordados-base', categoria: 'bordados', nombre: 'Muestras de Bordados', precio: 'Personalizado', portada: 'img/portada-bordados-1.jpg', estado: 'normal', desc: 'Logotipos de alta definición, nombres y banderas.', prefijo: 'img/bordados-', extension: '.jpg', totalMuestras: 20 }
         ];
 
-        // CONFIGURACIÓN DE LOS 4 VIDEOS PROMOCIONALES
+        // CONFIGURACIÓN DE LOS 6 VIDEOS PROMOCIONALES
         const listaVideos = [
             {
                 id: 'vid-1',
@@ -323,6 +323,22 @@
                 archivo: 'videos/promo4.mp4',
                 etiqueta: 'Promoción',
                 colorEtiqueta: 'var(--neon-rosado)'
+            },
+            {
+                id: 'vid-5',
+                titulo: 'Proceso de Confección Industrial',
+                desc: 'Mirada exclusiva al trabajo artesanal e industrial en nuestro taller.',
+                archivo: 'videos/promo5.mp4',
+                etiqueta: 'Exclusivo',
+                colorEtiqueta: 'var(--neon-alerta)'
+            },
+            {
+                id: 'vid-6',
+                titulo: 'Demostración de Capuchones y Accesorios',
+                desc: 'Detalles de confección y ajuste en capuchones de Drill y Dacrón.',
+                archivo: 'videos/promo6.mp4',
+                etiqueta: 'Novedad',
+                colorEtiqueta: 'var(--neon-azul)'
             }
         ];
 
@@ -388,7 +404,7 @@
                 }
             });
 
-            // Cargar los 4 Videos
+            // Cargar los 6 Videos
             listaVideos.forEach(v => {
                 const mensajeWa = encodeURIComponent(`*Hola Reyand InduPro!* Vi el video "*${v.titulo}*" y me gustaría cotizar este tipo de prendas.`);
                 
