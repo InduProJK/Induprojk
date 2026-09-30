@@ -188,7 +188,6 @@
     </div>
 
     <div class="container">
-        <!-- PANTALLAS (INICIO, CATÁLOGO, BORDADOS, PAGOS) -->
         <div id="pantalla-inicio" class="seccion-pantalla activa">
             <div class="bienvenida-box">
                 <h2>Exhibición Oficial de Muestras y Confección</h2>
@@ -225,7 +224,6 @@
         </div>
     </div>
 
-    <!-- MODAL GALERÍA DE MUESTRAS -->
     <div id="modal-galeria" class="modal-overlay">
         <div class="caja-modal">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px;">
@@ -243,11 +241,10 @@
     <footer>
         <p>© Reyand InduPro - Confección Industrial y Dotaciones</p>
     </footer>
-
-    <script>
+        <script>
         const lineasBase = [
             { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reforzada a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
-            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reinforced a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
+            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reforzada a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
             { id: 'exclusiva', categoria: 'catalogo', nombre: 'PRO Exclusivas', precio: 'A Convenir', portada: 'img/portada-exclusiva-1.jpg', estado: 'nuevo', desc: 'Diseños de gran formato con cortes combinados únicos.', prefijo: 'img/chaqueta-exclusiva-', extension: '.jpg', totalMuestras: 14 },
             { id: 'dama', categoria: 'catalogo', nombre: 'Premium Dama', precio: '$95.000', portada: 'img/portada-dama-1.jpg', estado: 'normal', desc: 'Confección con horma femenina estilizada.', prefijo: 'img/chaqueta-dama-', extension: '.jpg', totalMuestras: 10 },
             { id: 'capuchon-drill', categoria: 'catalogo', nombre: 'Capuchón de Drill', precio: 'Unidad: $16.000', portada: 'img/portada-capuchon-drill.jpg', estado: 'normal', desc: 'Protección industrial superior en tela Drill.', prefijo: 'img/capuchon-drill-', extension: '.jpg', totalMuestras: 26 },
@@ -332,4 +329,25 @@
 
                 contenedorModal.innerHTML += `
                     <div class="galeria-item">
-                        <span class="numero-muestra
+                        <span class="numero-muestra-tag">#${i}</span>
+                        <img src="${rutaFoto}" alt="${linea.nombre} #${i}" onerror="this.src='https://via.placeholder.com/200x200/0b0f14/00f0ff?text=${encodeURIComponent(linea.nombre)}+%23${i}'">
+                        <a href="https://api.whatsapp.com/send?phone=573184250115&text=${mensajeWa}" target="_blank" class="btn-cotizar-muestra">
+                            <i class="fa-brands fa-whatsapp"></i> Cotizar #${i}
+                        </a>
+                    </div>
+                `;
+            }
+
+            document.getElementById('modal-galeria').style.display = 'flex';
+        }
+
+        function cerrarModal(modalId) { 
+            document.getElementById(modalId).style.display = 'none'; 
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarPagina();
+        });
+    </script>
+</body>
+</html>
