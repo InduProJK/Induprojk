@@ -247,7 +247,7 @@
     <script>
         const lineasBase = [
             { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reforzada a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
-            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reforzada a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
+            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reinforced a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
             { id: 'exclusiva', categoria: 'catalogo', nombre: 'PRO Exclusivas', precio: 'A Convenir', portada: 'img/portada-exclusiva-1.jpg', estado: 'nuevo', desc: 'Diseños de gran formato con cortes combinados únicos.', prefijo: 'img/chaqueta-exclusiva-', extension: '.jpg', totalMuestras: 14 },
             { id: 'dama', categoria: 'catalogo', nombre: 'Premium Dama', precio: '$95.000', portada: 'img/portada-dama-1.jpg', estado: 'normal', desc: 'Confección con horma femenina estilizada.', prefijo: 'img/chaqueta-dama-', extension: '.jpg', totalMuestras: 10 },
             { id: 'capuchon-drill', categoria: 'catalogo', nombre: 'Capuchón de Drill', precio: 'Unidad: $16.000', portada: 'img/portada-capuchon-drill.jpg', estado: 'normal', desc: 'Protección industrial superior en tela Drill.', prefijo: 'img/capuchon-drill-', extension: '.jpg', totalMuestras: 26 },
@@ -255,14 +255,22 @@
             { id: 'bordados-base', categoria: 'bordados', nombre: 'Muestras de Bordados', precio: 'Personalizado', portada: 'img/portada-bordados-1.jpg', estado: 'normal', desc: 'Logotipos de alta definición, nombres y banderas.', prefijo: 'img/bordados-', extension: '.jpg', totalMuestras: 20 }
         ];
 
-        function cambiarPestaña(pantallaId, boton) {
-            document.querySelectorAll('.seccion-pantalla').forEach(s => s.classList.remove('activa'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
-            
-            const pantallaTarget = document.getElementById(`pantalla-${pantallaId}`);
-            if (pantallaTarget) pantallaTarget.classList.add('activa');
-            
-            if (boton) boton.classList.add('activo');
+        function cambiarPestaña(nombrePestaña, boton) {
+            document.querySelectorAll('.seccion-pantalla').forEach(seccion => {
+                seccion.classList.remove('activa');
+            });
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('activo');
+            });
+
+            const seccionDestino = document.getElementById('pantalla-' + nombrePestaña);
+            if (seccionDestino) {
+                seccionDestino.classList.add('activa');
+            }
+
+            if (boton) {
+                boton.classList.add('activo');
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -324,5 +332,4 @@
 
                 contenedorModal.innerHTML += `
                     <div class="galeria-item">
-                        <span class="numero-muestra-tag">#${i}</span>
-                        <img src="${rutaFoto}" alt="${linea.nombre} #${i}" onerror="this.src='https://via.plac
+                        <span class="numero-muestra
