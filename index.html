@@ -5,31 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reyand InduPro | Catálogo Industrial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SDKs de Firebase v9 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AlzaSyB54k-MuLoqtkl7CSVt1UsHvPt5XY_rl5s",
-            authDomain: "reyand-indupro.firebaseapp.com",
-            projectId: "reyand-indupro",
-            storageBucket: "reyand-indupro.firebasestorage.app",
-            messagingSenderId: "927807451159",
-            appId: "1:927807451159:web:e9a599ecfab290abe16c52",
-            measurementId: "G-6FBN8NPH6X"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        window.auth = getAuth(app);
-        window.db = getFirestore(app);
-        window.fb = {
-            signInWithEmailAndPassword, signOut, onAuthStateChanged,
-            collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy
-        };
-    </script>
 
     <style>
         :root {
@@ -53,16 +28,6 @@
             background: linear-gradient(180deg, #020406 0%, #040609 100%);
             position: relative;
         }
-
-        .btn-candado-moderador {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(255, 255, 255, 0.05); color: var(--texto-gris);
-            width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem; cursor: pointer; transition: 0.3s;
-        }
-        .btn-candado-moderador:hover { color: var(--neon-alerta); border-color: var(--neon-alerta); box-shadow: 0 0 10px rgba(255,170,0,0.3); }
-        body.modo-moderador-activo .btn-candado-moderador { color: var(--neon-verde); border-color: var(--neon-verde); box-shadow: 0 0 12px var(--neon-verde); }
 
         .logo-box img {
             max-width: 170px; width: 100%; height: auto;
@@ -156,35 +121,6 @@
         }
         .btn-galeria:hover { background: white; box-shadow: 0 0 12px white; }
 
-        .panel-acciones-item {
-            display: none; background: #160305; border-top: 1px solid var(--rojo-eliminar);
-            padding: 10px; gap: 8px; flex-wrap: wrap; justify-content: space-between;
-        }
-        body.modo-moderador-activo .panel-acciones-item { display: flex; }
-
-        .btn-mod { padding: 6px 12px; border-radius: 4px; border: none; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-        .btn-mod.eliminar { background: var(--rojo-eliminar); color: white; }
-        .btn-mod.editar { background: var(--neon-azul); color: black; }
-        .btn-mod.estado { background: var(--neon-alerta); color: black; }
-
-        .caja-panel-gestion {
-            background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px;
-            padding: 25px; margin-bottom: 30px; display: none;
-        }
-        body.modo-moderador-activo .caja-panel-gestion { display: block; }
-        .caja-panel-gestion h3 { color: var(--neon-azul); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-
-        .campo-input {
-            width: 100%; padding: 12px; background: #040609; border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 6px; color: white; margin-bottom: 15px; font-size: 0.95rem;
-        }
-
-        .btn-entrar {
-            background: var(--neon-alerta); color: black; border: none; width: 100%; padding: 12px;
-            font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s;
-        }
-        .btn-entrar:hover { filter: brightness(1.1); }
-
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); z-index: 300; justify-content: center; align-items: center; padding: 20px;
@@ -193,7 +129,6 @@
             background: var(--bg-tarjeta); border: 1px solid var(--neon-azul); border-radius: 12px;
             max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 25px; position: relative;
         }
-        .caja-login { max-width: 420px; border-color: var(--neon-alerta); text-align: center; }
 
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
         .galeria-item { background: #040609; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; }
@@ -211,43 +146,11 @@
             align-items: center; justify-content: center; gap: 6px;
         }
 
-        .btn-eliminar-foto-galeria {
-            background: var(--rojo-eliminar); color: white; border: none; width: 100%; padding: 8px;
-            font-size: 0.8rem; font-weight: bold; cursor: pointer; display: none;
-        }
-        body.modo-moderador-activo .btn-eliminar-foto-galeria { display: block; }
-
         .btn-whatsapp-global {
             position: fixed; bottom: 25px; right: 25px; background: var(--neon-verde); color: white;
             padding: 14px 22px; border-radius: 50px; font-weight: bold; font-size: 1rem; text-decoration: none;
             display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 25px rgba(37,211,102,0.4); z-index: 150;
         }
-
-        #loader-nube {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(4, 6, 9, 0.85); backdrop-filter: blur(5px); z-index: 9999;
-            flex-direction: column; justify-content: center; align-items: center; gap: 18px;
-        }
-        .spinner-nube {
-            width: 50px; height: 50px; border: 5px solid rgba(0,240,255,0.1);
-            border-top: 5px solid var(--neon-azul); border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #loader-nube p { color: var(--neon-azul); font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px; }
-
-        #toast-notificacion {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: var(--bg-tarjeta); border: 1px solid var(--neon-verde); color: white;
-            padding: 14px 28px; border-radius: 50px; box-shadow: 0 0 20px rgba(37,211,102,0.3);
-            display: flex; align-items: center; gap: 12px; font-weight: bold; z-index: 9999;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
-            opacity: 0; pointer-events: none;
-        }
-        #toast-notificacion.visible {
-            transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto;
-        }
-        #toast-notificacion i { color: var(--neon-verde); font-size: 1.3rem; }
 
         footer { background: #020406; border-top: 1px solid rgba(255,255,255,0.05); padding: 30px 20px; text-align: center; color: var(--texto-gris); font-size: 0.88rem; }
         footer a { color: var(--texto-gris); text-decoration: none; margin: 0 8px; }
@@ -256,20 +159,7 @@
 </head>
 <body>
 
-    <div id="loader-nube">
-        <div class="spinner-nube"></div>
-        <p id="loader-texto">Sincronizando con la nube...</p>
-    </div>
-
-    <div id="toast-notificacion">
-        <i class="fa-solid fa-circle-check"></i>
-        <span id="toast-mensaje">¡Cambios guardados con éxito!</span>
-    </div>
-
     <header>
-        <button class="btn-candado-moderador" onclick="abrirModalLogin()" title="Acceso Moderador">
-            <i class="fa-solid fa-lock" id="icono-candado"></i>
-        </button>
         <div class="logo-box">
             <img src="img/logo-induprojk.jpg" alt="Reyand InduPro" onerror="this.src='https://via.placeholder.com/170/0b0f14/00f0ff?text=Reyand'">
         </div>
@@ -298,45 +188,6 @@
     </div>
 
     <div class="container">
-        <!-- PANEL DE CONTROL Y EDICIÓN -->
-        <div class="caja-panel-gestion">
-            <h3>
-                <span id="form-titulo-modo"><i class="fa-solid fa-cloud-arrow-up"></i> Agregar o Editar Prenda en la Nube</span>
-                <button onclick="cerrarSesionModerador()" style="background:var(--rojo-eliminar); color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.8rem;">Salir</button>
-            </h3>
-            <p style="font-size: 0.88rem; color: var(--texto-gris); margin-bottom: 12px;">Sube tus imágenes a <a href="https://imgbb.com" target="_blank" style="color: var(--neon-azul); font-weight: bold;">ImgBB.com</a> para obtener enlaces HD al instante y pégalos abajo:</p>
-            <form id="form-agregar-producto" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:12px;">
-                <input type="hidden" id="edit-id-producto" value="">
-                <input type="text" id="add-nombre" placeholder="Nombre de la prenda/línea" class="campo-input" required style="margin:0;">
-                <input type="text" id="add-precio" placeholder="Precio (Ej: $85.000 / Docena: $...)" class="campo-input" required style="margin:0;">
-                <input type="text" id="add-desc" placeholder="Descripción breve..." class="campo-input" style="margin:0;">
-                
-                <select id="add-categoria" class="campo-input" style="margin:0; background:#040609;">
-                    <option value="catalogo">Categoría: Catálogo Principal</option>
-                    <option value="bordados">Categoría: Bordados</option>
-                </select>
-                
-                <select id="add-estado" class="campo-input" style="margin:0; background:#040609;">
-                    <option value="normal">Estado: Normal</option>
-                    <option value="nuevo">Nuevo Producto!</option>
-                    <option value="promo">En Promoción</option>
-                    <option value="agotado">Agotado</option>
-                </select>
-                
-                <input type="url" id="add-url-portada" placeholder="Enlace de la Foto de Portada (https://...)" class="campo-input" required style="margin:0; grid-column: 1 / -1;">
-                <input type="url" id="add-url-galeria" placeholder="Enlace de la Foto de Galería / Muestra (Opcional)" class="campo-input" style="margin:0; grid-column: 1 / -1;">
-                
-                <div style="grid-column: 1 / -1; display:flex; gap:10px;">
-                    <button type="submit" class="btn-entrar" id="btn-guardar-main" style="background:var(--neon-azul); color:black; margin:0; flex:1;">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar y Publicar al Instante
-                    </button>
-                    <button type="button" id="btn-cancelar-edicion" onclick="limpiarFormularioEdicion()" style="display:none; background:var(--texto-gris); color:black; border:none; padding:12px; border-radius:6px; font-weight:bold; cursor:pointer;">
-                        Cancelar Edición
-                    </button>
-                </div>
-            </form>
-        </div>
-
         <!-- PANTALLAS (INICIO, CATÁLOGO, BORDADOS, PAGOS) -->
         <div id="pantalla-inicio" class="seccion-pantalla activa">
             <div class="bienvenida-box">
@@ -374,18 +225,7 @@
         </div>
     </div>
 
-    <!-- MODALES -->
-    <div id="modal-login" class="modal-overlay">
-        <div class="caja-modal caja-login">
-            <h3 style="color:var(--neon-alerta); margin-bottom:15px;"><i class="fa-solid fa-shield-halved"></i> Acceso Moderador</h3>
-            <p style="color: var(--texto-gris); font-size: 0.85rem; margin-bottom:15px;">Ingresa tus credenciales para administrar el catálogo.</p>
-            <input type="email" id="login-email" placeholder="Correo electrónico" class="campo-input">
-            <input type="password" id="login-password" placeholder="Contraseña" class="campo-input">
-            <button class="btn-entrar" onclick="iniciarSesionModerador()">Ingresar</button>
-            <button onclick="cerrarModal('modal-login')" style="background: transparent; border:none; color: var(--texto-gris); margin-top: 15px; cursor: pointer; font-size: 0.85rem;">Cancelar</button>
-        </div>
-    </div>
-
+    <!-- MODAL GALERÍA DE MUESTRAS -->
     <div id="modal-galeria" class="modal-overlay">
         <div class="caja-modal">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px;">
@@ -415,8 +255,6 @@
             { id: 'bordados-base', categoria: 'bordados', nombre: 'Muestras de Bordados', precio: 'Personalizado', portada: 'img/portada-bordados-1.jpg', estado: 'normal', desc: 'Logotipos de alta definición, nombres y banderas.', prefijo: 'img/bordados-', extension: '.jpg', totalMuestras: 20 }
         ];
 
-        let prendasNube = [];
-
         function cambiarPestaña(pantallaId, boton) {
             document.querySelectorAll('.seccion-pantalla').forEach(s => s.classList.remove('activa'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
@@ -428,22 +266,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function mostrarCargando(mensaje) {
-            document.getElementById('loader-texto').innerText = mensaje || "Sincronizando con la nube...";
-            document.getElementById('loader-nube').style.display = 'flex';
-        }
-
-        function ocultarCargando() {
-            document.getElementById('loader-nube').style.display = 'none';
-        }
-
-        function mostrarNotificacion(mensaje) {
-            const toast = document.getElementById('toast-notificacion');
-            document.getElementById('toast-mensaje').innerText = mensaje;
-            toast.classList.add('visible');
-            setTimeout(() => { toast.classList.remove('visible'); }, 3500);
-        }
-
         function renderizarPagina() {
             const contenedorCat = document.getElementById('contenedor-catalogo-dinamico');
             const contenedorBord = document.getElementById('contenedor-bordados-dinamico');
@@ -453,16 +275,13 @@
             contenedorCat.innerHTML = "";
             contenedorBord.innerHTML = "";
 
-            const todasLasPrendas = [...prendasNube, ...lineasBase];
-
-            todasLasPrendas.forEach(p => {
+            lineasBase.forEach(p => {
                 let badgeEstado = "";
                 if (p.estado === 'promo') badgeEstado = `<span class="badge-estado promo">En Promo</span>`;
                 if (p.estado === 'agotado') badgeEstado = `<span class="badge-estado agotado">Agotado</span>`;
                 if (p.estado === 'nuevo') badgeEstado = `<span class="badge-estado nuevo">Nuevo</span>`;
 
-                const esDeNube = !lineasBase.some(lb => lb.id === p.id);
-                const cantidadFotos = p.fotosGaleria ? p.fotosGaleria.length : (p.totalMuestras || 1);
+                const cantidadFotos = p.totalMuestras || 1;
 
                 const htmlTarjeta = `
                     <div class="tarjeta-portada">
@@ -478,13 +297,6 @@
                                 <i class="fa-solid fa-images"></i> Ver Muestras (${cantidadFotos})
                             </button>
                         </div>
-                        <div class="panel-acciones-item">
-                            <button class="btn-mod estado" onclick="cambiarEstadoPrenda('${p.id}', '${p.estado}', ${esDeNube})">${p.estado}</button>
-                            ${esDeNube ? `
-                                <button class="btn-mod editar" onclick="cargarPrendaParaEditar('${p.id}')"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
-                                <button class="btn-mod eliminar" onclick="eliminarPrendaNube('${p.id}')"><i class="fa-solid fa-trash"></i></button>
-                            ` : ''}
-                        </div>
                     </div>
                 `;
 
@@ -497,252 +309,20 @@
         }
 
         function abrirGaleria(idLinea) {
-            const todas = [...prendasNube, ...lineasBase];
-            let linea = todas.find(l => l.id === idLinea);
+            let linea = lineasBase.find(l => l.id === idLinea);
             if (!linea) return;
 
             document.getElementById('galeria-titulo').innerText = `Muestras: ${linea.nombre}`;
             const contenedorModal = document.getElementById('galeria-contenido');
             contenedorModal.innerHTML = "";
 
-            const esDeNube = !lineasBase.some(lb => lb.id === linea.id);
+            const total = linea.totalMuestras || 1;
+            for (let i = 1; i <= total; i++) {
+                const rutaFoto = linea.prefijo ? `${linea.prefijo}${i}${linea.extension}` : linea.portada;
+                const textowhatsapp = `*Hola Reyand InduPro!* Me interesa cotizar esta muestra: *${linea.nombre} #${i}*`;
+                const mensajeWa = encodeURIComponent(textowhatsapp);
 
-            if (esDeNube && linea.fotosGaleria && linea.fotosGaleria.length > 0) {
-                linea.fotosGaleria.forEach((fotoUrl, idx) => {
-                    const textowhatsapp = `*Hola Reyand InduPro!* Me interesa cotizar esta muestra: *${linea.nombre} #${idx + 1}*`;
-                    const mensajeWa = encodeURIComponent(textowhatsapp);
-                    
-                    contenedorModal.innerHTML += `
-                        <div class="galeria-item">
-                            <span class="numero-muestra-tag">#${idx + 1}</span>
-                            <img src="${fotoUrl}" alt="${linea.nombre} #${idx + 1}">
-                            <a href="https://api.whatsapp.com/send?phone=573184250115&text=${mensajeWa}" target="_blank" class="btn-cotizar-muestra">
-                                <i class="fa-brands fa-whatsapp"></i> Cotizar #${idx + 1}
-                            </a>
-                            <button class="btn-eliminar-foto-galeria" onclick="eliminarFotoEspecificaGaleria('${linea.id}', ${idx})">
-                                <i class="fa-solid fa-trash"></i> Borrar esta foto
-                            </button>
-                        </div>
-                    `;
-                });
-            } else {
-                const total = linea.totalMuestras || 1;
-                for (let i = 1; i <= total; i++) {
-                    const rutaFoto = linea.prefijo ? `${linea.prefijo}${i}${linea.extension}` : linea.portada;
-                    const textowhatsapp = `*Hola Reyand InduPro!* Me interesa cotizar esta muestra: *${linea.nombre} #${i}*`;
-                    const mensajeWa = encodeURIComponent(textowhatsapp);
-
-                    contenedorModal.innerHTML += `
-                        <div class="galeria-item">
-                            <span class="numero-muestra-tag">#${i}</span>
-                            <img src="${rutaFoto}" alt="${linea.nombre} #${i}" onerror="this.src='https://via.placeholder.com/200x200/0b0f14/00f0ff?text=${encodeURIComponent(linea.nombre)}+%23${i}'">
-                            <a href="https://api.whatsapp.com/send?phone=573184250115&text=${mensajeWa}" target="_blank" class="btn-cotizar-muestra">
-                                <i class="fa-brands fa-whatsapp"></i> Cotizar #${i}
-                            </a>
-                        </div>
-                    `;
-                }
-            }
-
-            document.getElementById('modal-galeria').style.display = 'flex';
-        }
-
-        function abrirModalLogin() { document.getElementById('modal-login').style.display = 'flex'; }
-        function cerrarModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
-
-        async function iniciarSesionModerador() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            try {
-                mostrarCargando("Verificando credenciales...");
-                await window.fb.signInWithEmailAndPassword(window.auth, email, password);
-                ocultarCargando();
-                cerrarModal('modal-login');
-                mostrarNotificacion("¡Modo Moderador Activo!");
-            } catch (error) {
-                ocultarCargando();
-                alert("Credenciales incorrectas: " + error.message);
-            }
-        }
-
-        async function cerrarSesionModerador() {
-            mostrarCargando("Cerrando sesión...");
-            await window.fb.signOut(window.auth);
-            ocultarCargando();
-            mostrarNotificacion("Sesión cerrada.");
-        }
-
-        function iniciarEscuchadorNube() {
-            const colRef = window.fb.collection(window.db, "productos");
-            window.fb.onSnapshot(colRef, (snapshot) => {
-                prendasNube = [];
-                snapshot.forEach(docSnap => {
-                    prendasNube.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderizarPagina();
-            }, (error) => {
-                console.error("Error escuchando Firestore:", error);
-            });
-        }
-
-        // GUARDAR DATOS Y ENLACES EN FIRESTORE
-        document.getElementById('form-agregar-producto').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const idEdit = document.getElementById('edit-id-producto').value;
-            const urlPortada = document.getElementById('add-url-portada').value.trim();
-            const urlGaleria = document.getElementById('add-url-galeria').value.trim();
-
-            mostrarCargando(idEdit ? "Actualizando producto en la nube..." : "Guardando producto...");
-
-            try {
-                let productoExistente = idEdit ? prendasNube.find(p => p.id === idEdit) : null;
-                let arregloGaleria = productoExistente && productoExistente.fotosGaleria ? [...productoExistente.fotosGaleria] : [];
-
-                if (urlGaleria && !arregloGaleria.includes(urlGaleria)) {
-                    arregloGaleria.push(urlGaleria);
-                }
-
-                if (arregloGaleria.length === 0) {
-                    arregloGaleria.push(urlPortada);
-                }
-
-                const datosPrenda = {
-                    nombre: document.getElementById('add-nombre').value,
-                    precio: document.getElementById('add-precio').value,
-                    desc: document.getElementById('add-desc').value || 'Prenda en confección personalizada.',
-                    categoria: document.getElementById('add-categoria').value,
-                    estado: document.getElementById('add-estado').value,
-                    portada: urlPortada,
-                    fotosGaleria: arregloGaleria,
-                    actualizadoEn: Date.now()
-                };
-
-                if (idEdit) {
-                    await window.fb.updateDoc(window.fb.doc(window.db, "productos", idEdit), datosPrenda);
-                    mostrarNotificacion("¡Producto actualizado con éxito!");
-                } else {
-                    datosPrenda.creadoEn = Date.now();
-                    await window.fb.addDoc(window.fb.collection(window.db, "productos"), datosPrenda);
-                    mostrarNotificacion("¡Producto guardado con éxito!");
-                }
-
-                limpiarFormularioEdicion();
-                ocultarCargando();
-            } catch (err) {
-                ocultarCargando();
-                alert("Error al guardar en la nube: " + err.message);
-            }
-        });
-
-        function cargarPrendaParaEditar(id) {
-            mostrarCargando("Cargando datos para edición...");
-            const prenda = prendasNube.find(p => p.id === id);
-            if (prenda) {
-                document.getElementById('edit-id-producto').value = prenda.id;
-                document.getElementById('add-nombre').value = prenda.nombre;
-                document.getElementById('add-precio').value = prenda.precio;
-                document.getElementById('add-desc').value = prenda.desc || "";
-                document.getElementById('add-categoria').value = prenda.categoria || 'catalogo';
-                document.getElementById('add-estado').value = prenda.estado || 'normal';
-                document.getElementById('add-url-portada').value = prenda.portada || "";
-                
-                document.getElementById('form-titulo-modo').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Editando: ${prenda.nombre}`;
-                document.getElementById('btn-guardar-main').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios`;
-                document.getElementById('btn-cancelar-edicion').style.display = "block";
-
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-            ocultarCargando();
-        }
-
-        function limpiarFormularioEdicion() {
-            document.getElementById('form-agregar-producto').reset();
-            document.getElementById('edit-id-producto').value = "";
-            document.getElementById('form-titulo-modo').innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Agregar o Editar Prenda en la Nube`;
-            document.getElementById('btn-guardar-main').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar y Publicar al Instante`;
-            document.getElementById('btn-cancelar-edicion').style.display = "none";
-        }
-
-        async function eliminarFotoEspecificaGaleria(idPrenda, indiceFoto) {
-            if (!confirm("¿Deseas eliminar esta foto de la galería?")) return;
-
-            try {
-                mostrarCargando("Eliminando foto de la galería...");
-                const prenda = prendasNube.find(p => p.id === idPrenda);
-                if (prenda && prenda.fotosGaleria) {
-                    prenda.fotosGaleria.splice(indiceFoto, 1);
-                    await window.fb.updateDoc(window.fb.doc(window.db, "productos", idPrenda), {
-                        fotosGaleria: prenda.fotosGaleria
-                    });
-                    ocultarCargando();
-                    mostrarNotificacion("Foto eliminada correctamente");
-                    abrirGaleria(idPrenda);
-                }
-            } catch (err) {
-                ocultarCargando();
-                alert("Error al eliminar la foto: " + err.message);
-            }
-        }
-
-        async function eliminarPrendaNube(id) {
-            if (!confirm("¿Seguro que deseas eliminar esta prenda definitivamente?")) return;
-
-            try {
-                mostrarCargando("Eliminando prenda de la nube...");
-                await window.fb.deleteDoc(window.fb.doc(window.db, "productos", id));
-                ocultarCargando();
-                mostrarNotificacion("¡Prenda eliminada con éxito!");
-            } catch (err) {
-                ocultarCargando();
-                alert("Error al eliminar: " + err.message);
-            }
-        }
-
-        async function cambiarEstadoPrenda(id, estadoActual, esDeNube) {
-            const estados = ['normal', 'nuevo', 'promo', 'agotado'];
-            const siguienteEstado = estados[(estados.indexOf(estadoActual) + 1) % estados.length];
-
-            if (esDeNube) {
-                try {
-                    mostrarCargando(`Cambiando estado a ${siguienteEstado.toUpperCase()}...`);
-                    await window.fb.updateDoc(window.fb.doc(window.db, "productos", id), {
-                        estado: siguienteEstado
-                    });
-                    ocultarCargando();
-                    mostrarNotificacion(`Estado cambiado a: ${siguienteEstado.toUpperCase()}`);
-                } catch (err) {
-                    ocultarCargando();
-                    alert("Error al actualizar estado: " + err.message);
-                }
-            } else {
-                const prenda = lineasBase.find(l => l.id === id);
-                if (prenda) {
-                    prenda.estado = siguienteEstado;
-                    renderizarPagina();
-                    mostrarNotificacion(`Estado cambiado a: ${siguienteEstado.toUpperCase()}`);
-                }
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            renderizarPagina();
-            setTimeout(() => {
-                if (window.auth && window.db) {
-                    window.fb.onAuthStateChanged(window.auth, (user) => {
-                        const candado = document.getElementById('icono-candado');
-                        if (user) {
-                            document.body.classList.add('modo-moderador-activo');
-                            if(candado) candado.className = "fa-solid fa-lock-open";
-                        } else {
-                            document.body.classList.remove('modo-moderador-activo');
-                            if(candado) candado.className = "fa-solid fa-lock";
-                        }
-                    });
-                    iniciarEscuchadorNube();
-                }
-            }, 1000);
-        });
-    </script>
-</body>
-</html>
+                contenedorModal.innerHTML += `
+                    <div class="galeria-item">
+                        <span class="numero-muestra-tag">#${i}</span>
+                        <img src="${rutaFoto}" alt="${linea.nombre} #${i}" onerror="this.src='https://via.plac
