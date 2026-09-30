@@ -130,6 +130,20 @@
         .video-contenedor { width: 100%; background: #000; position: relative; overflow: hidden; }
         .video-contenedor video { width: 100%; height: auto; max-height: 480px; display: block; object-fit: contain; }
 
+        /* GLOBO FLOTANTE VIDEOS */
+        .globo-videos-flotante {
+            position: fixed; bottom: 25px; left: 20px;
+            background: linear-gradient(135deg, #0b0f14 0%, #020406 100%);
+            border: 2px solid var(--neon-rosado); color: white;
+            padding: 10px 18px; border-radius: 50px; font-size: 0.9rem; font-weight: bold;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 0 18px rgba(255, 100, 180, 0.4); z-index: 150; cursor: pointer;
+            animation: flotarBoton 2s infinite ease-in-out; transition: transform 0.3s ease;
+        }
+        .globo-videos-flotante:hover { transform: scale(1.08); box-shadow: 0 0 25px rgba(255, 100, 180, 0.7); }
+        .globo-videos-flotante i { font-size: 1.3rem; color: var(--neon-rosado); }
+        @keyframes flotarBoton { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
         /* MODAL GALERÍA Y VISOR ZOOM */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -272,6 +286,12 @@
         <p style="color: white; margin-top: 15px; font-size: 0.9rem;"><i class="fa-solid fa-hand-pointer"></i> Puedes ampliar con tus dos dedos en el celular</p>
     </div>
 
+    <!-- GLOBO FLOTANTE VIDEOS -->
+    <div class="globo-videos-flotante" onclick="irAVideosDesdeGlobo()">
+        <i class="fa-solid fa-circle-play"></i>
+        <span>¡Ver Videos / Promos! 🎬</span>
+    </div>
+
     <a href="https://api.whatsapp.com/send?phone=573184250115&text=*Hola!%20Vengo%20desde%20el%20Cat%C3%A1logo%20Digital%20de%20Reyand%20InduPro.*" target="_blank" class="btn-whatsapp-global">
         <i class="fa-brands fa-whatsapp" style="font-size: 1.4rem;"></i> Agendar por WhatsApp
     </a>
@@ -280,11 +300,13 @@
         <p>© Reyand InduPro - Confección Industrial y Dotaciones</p>
     </footer>
         <script>
+        // NUEVO ORDEN DE LÍNEAS DEL CATÁLOGO
         const lineasBase = [
-            { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reforzada a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
             { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reforzada a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
-            { id: 'exclusiva', categoria: 'catalogo', nombre: 'PRO Exclusivas', precio: 'A Convenir', portada: 'img/portada-exclusiva-1.jpg', estado: 'nuevo', desc: 'Diseños de gran formato con cortes combinados únicos.', prefijo: 'img/chaqueta-exclusiva-', extension: '.jpg', totalMuestras: 14 },
+            { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reforzada a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
             { id: 'dama', categoria: 'catalogo', nombre: 'Premium Dama', precio: '$95.000', portada: 'img/portada-dama-1.jpg', estado: 'normal', desc: 'Confección con horma femenina estilizada.', prefijo: 'img/chaqueta-dama-', extension: '.jpg', totalMuestras: 10 },
+            { id: 'exclusiva', categoria: 'catalogo', nombre: 'PRO Exclusivas', precio: 'A Convenir', portada: 'img/portada-exclusiva-1.jpg', estado: 'normal', desc: 'Diseños de gran formato con cortes combinados únicos.', prefijo: 'img/chaqueta-exclusiva-', extension: '.jpg', totalMuestras: 14 },
+            { id: 'capuchon-personalizado', categoria: 'catalogo', nombre: 'Capuchón Drill Personalizado', precio: 'A Convenir', portada: 'img/portada-cpersonalizado-1.jpg', estado: 'nuevo', desc: 'Capuchones de Drill con diseños y logotipos personalizados.', prefijo: 'img/Cpersonalizado-', extension: '.jpg', totalMuestras: 8 },
             { id: 'capuchon-drill', categoria: 'catalogo', nombre: 'Capuchón de Drill', precio: 'Unidad: $16.000', portada: 'img/portada-capuchon-drill.jpg', estado: 'normal', desc: 'Protección industrial superior en tela Drill.', prefijo: 'img/capuchon-drill-', extension: '.jpg', totalMuestras: 26 },
             { id: 'capuchon-dracon', categoria: 'catalogo', nombre: 'Capuchón de Dacrón', precio: 'Unidad: $12.000', portada: 'img/portada-capuchon-dracon.jpg', estado: 'normal', desc: 'Diseño fresco y ligero para largas jornadas.', prefijo: 'img/capuchon-dracon-', extension: '.jpg', totalMuestras: 46 },
             { id: 'bordados-base', categoria: 'bordados', nombre: 'Muestras de Bordados', precio: 'Personalizado', portada: 'img/portada-bordados-1.jpg', estado: 'normal', desc: 'Logotipos de alta definición, nombres y banderas.', prefijo: 'img/bordados-', extension: '.jpg', totalMuestras: 20 }
@@ -359,6 +381,11 @@
                 boton.classList.add('activo');
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function irAVideosDesdeGlobo() {
+            const botonNavVideos = document.querySelectorAll('nav .nav-btn')[2];
+            cambiarPestaña('videos', botonNavVideos);
         }
 
         function renderizarPagina() {
