@@ -121,7 +121,7 @@
         }
         .btn-galeria:hover { background: white; box-shadow: 0 0 12px white; }
 
-        /* ESTILOS DE LA SECCIÓN DE VIDEOS */
+        /* VIDEOS */
         .tarjeta-video {
             background: var(--bg-tarjeta); border-radius: 14px; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; transition: 0.3s;
@@ -130,6 +130,7 @@
         .video-contenedor { width: 100%; background: #000; position: relative; overflow: hidden; }
         .video-contenedor video { width: 100%; height: auto; max-height: 480px; display: block; object-fit: contain; }
 
+        /* MODAL GALERÍA Y VISOR ZOOM */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); z-index: 300; justify-content: center; align-items: center; padding: 20px;
@@ -141,13 +142,25 @@
 
         .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
         .galeria-item { background: #040609; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; }
-        .galeria-item img { width: 100%; height: 220px; object-fit: contain; padding: 10px; background: #070a0e; }
+        
+        .img-zoom-box { position: relative; cursor: zoom-in; overflow: hidden; }
+        .img-zoom-box img { width: 100%; height: 220px; object-fit: contain; padding: 10px; background: #070a0e; transition: transform 0.3s ease; }
+        .img-zoom-box:hover img { transform: scale(1.08); }
+
+        .btn-ver-zoom {
+            position: absolute; bottom: 8px; right: 8px; background: rgba(0,240,255,0.9); color: #000;
+            border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; cursor: pointer; z-index: 6;
+        }
 
         .numero-muestra-tag {
             position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.85);
             color: var(--neon-azul); border: 1px solid var(--neon-azul); font-weight: bold;
             font-size: 0.8rem; padding: 3px 8px; border-radius: 4px; z-index: 5;
         }
+
+        /* MODAL ZOOM ULTRA HD */
+        #modal-zoom-visor { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 400; flex-direction: column; justify-content: center; align-items: center; padding: 15px; }
+        #modal-zoom-visor img { max-width: 95%; max-height: 80vh; object-fit: contain; border-radius: 8px; border: 1px solid var(--neon-azul); box-shadow: 0 0 30px rgba(0,240,255,0.3); }
 
         .btn-cotizar-muestra {
             background: var(--neon-verde); color: white; border: none; width: 100%; padding: 10px;
@@ -162,8 +175,6 @@
         }
 
         footer { background: #020406; border-top: 1px solid rgba(255,255,255,0.05); padding: 30px 20px; text-align: center; color: var(--texto-gris); font-size: 0.88rem; }
-        footer a { color: var(--texto-gris); text-decoration: none; margin: 0 8px; }
-        footer a:hover { color: var(--neon-azul); }
     </style>
 </head>
 <body>
@@ -198,7 +209,6 @@
     </div>
 
     <div class="container">
-        <!-- PANTALLAS -->
         <div id="pantalla-inicio" class="seccion-pantalla activa">
             <div class="bienvenida-box">
                 <h2>Exhibición Oficial de Muestras y Confección</h2>
@@ -218,7 +228,6 @@
             <div id="contenedor-catalogo-dinamico" class="grid-portadas"></div>
         </div>
 
-        <!-- NUEVA PANTALLA VIDEOS / PROMOS -->
         <div id="pantalla-videos" class="seccion-pantalla">
             <div class="bienvenida-box" style="border-color: var(--neon-rosado);">
                 <h2 style="color: var(--neon-rosado);"><i class="fa-solid fa-film"></i> Videos de Confección y Promociones</h2>
@@ -251,8 +260,16 @@
                 <h3 id="galeria-titulo" style="color: var(--neon-azul);">Muestras de la Línea</h3>
                 <button onclick="cerrarModal('modal-galeria')" style="background: var(--rojo-eliminar); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Cerrar ×</button>
             </div>
+            <p style="color:var(--neon-azul); font-size:0.85rem; text-align:center;"><i class="fa-solid fa-magnifying-glass-plus"></i> Toca cualquier imagen para verla en Zoom HD</p>
             <div id="galeria-contenido" class="galeria-grid"></div>
         </div>
+    </div>
+
+    <!-- MODAL VISOR ZOOM ULTRA HD -->
+    <div id="modal-zoom-visor" onclick="cerrarVisorZoom()">
+        <button style="position: absolute; top: 20px; right: 20px; background: var(--rojo-eliminar); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer;">Cerrar Zoom ×</button>
+        <img id="img-zoom-hd" src="" alt="Zoom Prenda">
+        <p style="color: white; margin-top: 15px; font-size: 0.9rem;"><i class="fa-solid fa-hand-pointer"></i> Puedes ampliar con tus dos dedos en el celular</p>
     </div>
 
     <a href="https://api.whatsapp.com/send?phone=573184250115&text=*Hola!%20Vengo%20desde%20el%20Cat%C3%A1logo%20Digital%20de%20Reyand%20InduPro.*" target="_blank" class="btn-whatsapp-global">
@@ -264,8 +281,8 @@
     </footer>
         <script>
         const lineasBase = [
-            { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reinforced a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
-            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reinforced a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
+            { id: 'estandar', categoria: 'catalogo', nombre: 'Camisa Estándar', precio: 'Base: $85.000', portada: 'img/portada-estandar-1.jpg', estado: 'normal', desc: 'Confección reforzada a 2 hilos con 2 broches.', prefijo: 'img/chaqueta-estandar-', extension: '.jpg', totalMuestras: 28 },
+            { id: 'premium', categoria: 'catalogo', nombre: 'Camisa Premium', precio: 'Base: $95.000', portada: 'img/portada-premium-1.jpg', estado: 'normal', desc: 'Confección reforzada a 3 hilos con 3 broches.', prefijo: 'img/chaqueta-premium-', extension: '.jpg', totalMuestras: 42 },
             { id: 'exclusiva', categoria: 'catalogo', nombre: 'PRO Exclusivas', precio: 'A Convenir', portada: 'img/portada-exclusiva-1.jpg', estado: 'nuevo', desc: 'Diseños de gran formato con cortes combinados únicos.', prefijo: 'img/chaqueta-exclusiva-', extension: '.jpg', totalMuestras: 14 },
             { id: 'dama', categoria: 'catalogo', nombre: 'Premium Dama', precio: '$95.000', portada: 'img/portada-dama-1.jpg', estado: 'normal', desc: 'Confección con horma femenina estilizada.', prefijo: 'img/chaqueta-dama-', extension: '.jpg', totalMuestras: 10 },
             { id: 'capuchon-drill', categoria: 'catalogo', nombre: 'Capuchón de Drill', precio: 'Unidad: $16.000', portada: 'img/portada-capuchon-drill.jpg', estado: 'normal', desc: 'Protección industrial superior en tela Drill.', prefijo: 'img/capuchon-drill-', extension: '.jpg', totalMuestras: 26 },
@@ -273,7 +290,7 @@
             { id: 'bordados-base', categoria: 'bordados', nombre: 'Muestras de Bordados', precio: 'Personalizado', portada: 'img/portada-bordados-1.jpg', estado: 'normal', desc: 'Logotipos de alta definición, nombres y banderas.', prefijo: 'img/bordados-', extension: '.jpg', totalMuestras: 20 }
         ];
 
-        // LISTA DE VIDEOS PROMOCIONALES Y DEMOSTRACIONES
+        // CONFIGURACIÓN DE LOS 4 VIDEOS PROMOCIONALES
         const listaVideos = [
             {
                 id: 'vid-1',
@@ -290,6 +307,22 @@
                 archivo: 'videos/promo2.mp4',
                 etiqueta: 'Bordados',
                 colorEtiqueta: 'var(--neon-morado)'
+            },
+            {
+                id: 'vid-3',
+                titulo: 'Demostración de Acabados Premium',
+                desc: 'Revisión de broches, cuello reforzado y detalles en tela.',
+                archivo: 'videos/promo3.mp4',
+                etiqueta: 'Calidad',
+                colorEtiqueta: 'var(--neon-verde)'
+            },
+            {
+                id: 'vid-4',
+                titulo: 'Catálogo de Dotaciones en Acción',
+                desc: 'Presentación de modelos combinados confeccionados sobre pedido.',
+                archivo: 'videos/promo4.mp4',
+                etiqueta: 'Promoción',
+                colorEtiqueta: 'var(--neon-rosado)'
             }
         ];
 
@@ -323,7 +356,6 @@
             contenedorBord.innerHTML = "";
             contenedorVid.innerHTML = "";
 
-            // Cargar Catálogo y Bordados
             lineasBase.forEach(p => {
                 let badgeEstado = "";
                 if (p.estado === 'promo') badgeEstado = `<span class="badge-estado promo">En Promo</span>`;
@@ -356,7 +388,7 @@
                 }
             });
 
-            // Cargar Videos
+            // Cargar los 4 Videos
             listaVideos.forEach(v => {
                 const mensajeWa = encodeURIComponent(`*Hola Reyand InduPro!* Vi el video "*${v.titulo}*" y me gustaría cotizar este tipo de prendas.`);
                 
@@ -399,7 +431,10 @@
                 contenedorModal.innerHTML += `
                     <div class="galeria-item">
                         <span class="numero-muestra-tag">#${i}</span>
-                        <img src="${rutaFoto}" alt="${linea.nombre} #${i}" onerror="this.src='https://via.placeholder.com/200x200/0b0f14/00f0ff?text=${encodeURIComponent(linea.nombre)}+%23${i}'">
+                        <div class="img-zoom-box" onclick="abrirVisorZoom('${rutaFoto}')">
+                            <img src="${rutaFoto}" alt="${linea.nombre} #${i}" onerror="this.src='https://via.placeholder.com/200x200/0b0f14/00f0ff?text=${encodeURIComponent(linea.nombre)}+%23${i}'">
+                            <button class="btn-ver-zoom"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom HD</button>
+                        </div>
                         <a href="https://api.whatsapp.com/send?phone=573184250115&text=${mensajeWa}" target="_blank" class="btn-cotizar-muestra">
                             <i class="fa-brands fa-whatsapp"></i> Cotizar #${i}
                         </a>
@@ -408,6 +443,18 @@
             }
 
             document.getElementById('modal-galeria').style.display = 'flex';
+        }
+
+        /* FUNCIONES DE ZOOM HD */
+        function abrirVisorZoom(rutaImagen) {
+            const visor = document.getElementById('modal-zoom-visor');
+            const imgHD = document.getElementById('img-zoom-hd');
+            imgHD.src = rutaImagen;
+            visor.style.display = 'flex';
+        }
+
+        function cerrarVisorZoom() {
+            document.getElementById('modal-zoom-visor').style.display = 'none';
         }
 
         function cerrarModal(modalId) { 
